@@ -62,7 +62,8 @@ public class MainActivity extends ActionBarActivity {
         chart.setData(ldata);
         chart.invalidate();
 
-       chart.animateY(1000);
+        chart.animateY(1000);
+
 
     }
 
