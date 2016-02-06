@@ -50,8 +50,18 @@ public class ListAdapter extends BaseAdapter{
         View rowView = inflater.inflate(R.layout.list_item, parent, false);
         TextView score = (TextView) rowView.findViewById(R.id.score);
         TextView departmentName = (TextView) rowView.findViewById(R.id.departmentName);
+        ImageView delta =(ImageView) rowView.findViewById(R.id.delta);
+        if(position<Utilities.departments[position].old_position)
+            delta.setBackgroundResource(R.drawable.up);
+            //delta.setVisibility(View.INVISIBLE);
+         if(position>Utilities.departments[position].old_position)
+            delta.setBackgroundResource(R.drawable.down);
+        else if(position==Utilities.departments[position].old_position)
+            delta.setBackgroundResource(R.drawable.same);
+
+
         score.setText(String.valueOf(Utilities.departments[position].score));
-        departmentName.setText(Utilities.departments[position].name);
+        departmentName.setText(Utilities.departments[position].name+"["+Utilities.departments[position].old_position+"]");
 
 
         //Log.e("adapter",Utilities.departments[position].name);

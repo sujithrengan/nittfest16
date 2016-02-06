@@ -82,6 +82,7 @@ public class MainActivity extends ActionBarActivity {
             }
             Utilities.departments=dp;
             Utilities.sortScores();
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
