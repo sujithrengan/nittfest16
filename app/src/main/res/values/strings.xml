@@ -4,6 +4,19 @@
     <string name="app_name">Nittfest</string>
     <string name="action_settings">Settings</string>
 
-
+<string-array name="departments">
+    <item>ARCHI</item>
+    <item>CA</item>
+    <item>CHEM</item>
+    <item>CIVIL</item>
+    <item>COMSCI</item>
+    <item>DOMS</item>
+    <item>ECE</item>
+    <item>EEE</item>
+    <item>ICE</item>
+    <item>MECH</item>
+    <item>MME</item>
+    <item>PROD</item>
+</string-array>
 
 </resources>

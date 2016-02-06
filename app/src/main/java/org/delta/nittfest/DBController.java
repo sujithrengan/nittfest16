@@ -23,7 +23,7 @@ public class DBController  extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         String query;
-        query = "CREATE TABLE scores ( departmentName TEXT, score INTEGER )";
+        query = "CREATE TABLE scores ( departmentName TEXT, score DECIMAL(10,2) )";
         database.execSQL(query);
         query = "CREATE TABLE notifs ( notifText TEXT,time TEXT )";
         database.execSQL(query);
@@ -43,12 +43,12 @@ public class DBController  extends SQLiteOpenHelper {
      * Inserts User into SQLite DB
      * @param queryValues
      */
-    public void insertDepartment(HashMap<String, String> queryValues) {
+    public void insertDepartment(Department department) {
         SQLiteDatabase database = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("departmentName", queryValues.get("departmentName"));
-        values.put("score", queryValues.get("score"));
-        database.insert("users", null, values);
+        values.put("departmentName", department.name);
+        values.put("score",department.score);
+        database.insert("scores", null, values);
         database.close();
     }
 
@@ -71,13 +71,13 @@ public class DBController  extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void updateScores(HashMap<String, String> queryValues) {
+    public void updateScores(Department department) {
         SQLiteDatabase database = this.getWritableDatabase();
-        String dn=queryValues.get("departmentName");
+        String dn=department.name;
         ContentValues values = new ContentValues();
         String where = "departmentName" + "= '" + dn+"'";
-        values.put("departmentName", queryValues.get("departmentName"));
-        values.put("score", queryValues.get("score"));
+        values.put("departmentName", department.name);
+        values.put("score", department.score);
         database.update("scores", values, where,null);
 
         database.close();
