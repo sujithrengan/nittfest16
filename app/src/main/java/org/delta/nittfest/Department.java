@@ -7,10 +7,13 @@ public class Department {
 
     public String name;
     public float score;
+    //public int cur_position;
+    public int old_position;
 
     Department(String name,float score)
     {
         this.name=name;
         this.score=score;
+
     }
 }

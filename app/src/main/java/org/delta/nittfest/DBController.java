@@ -13,6 +13,7 @@ package org.delta.nittfest;
         import android.database.Cursor;
         import android.database.sqlite.SQLiteDatabase;
         import android.database.sqlite.SQLiteOpenHelper;
+        import android.util.Log;
 
 public class DBController  extends SQLiteOpenHelper {
 
@@ -50,6 +51,7 @@ public class DBController  extends SQLiteOpenHelper {
         values.put("score",department.score);
         database.insert("scores", null, values);
         database.close();
+        Log.e("DB","inserted");
     }
 
     public void insertNotif(HashMap<String, String> queryValues) {
@@ -79,14 +81,14 @@ public class DBController  extends SQLiteOpenHelper {
         values.put("departmentName", department.name);
         values.put("score", department.score);
         database.update("scores", values, where,null);
-
+        Log.e("DB","updated");
         database.close();
     }
     /**
      * Get list of Users from SQLite DB as Array List
      * @return
      */
-    public ArrayList<HashMap<String, String>> getAllScores() {
+    public ArrayList<HashMap<String, String>> getAllScores2() {
         ArrayList<HashMap<String, String>> scoresList;
         scoresList = new ArrayList<HashMap<String, String>>();
         String selectQuery = "SELECT  * FROM scores";
@@ -103,6 +105,25 @@ public class DBController  extends SQLiteOpenHelper {
         }
         database.close();
         return scoresList;
+    }
+
+
+    public Department[] getAllScores() {
+
+        Department departments[]=new Department[12];
+
+        String selectQuery = "SELECT  * FROM scores";
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            int i=0;
+            do {
+                departments[i]=new Department(cursor.getString(0),cursor.getFloat(1));
+                i++;
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        return departments;
     }
 
     public ArrayList<HashMap<String, String>> getAllNotifs() {

@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,19 +39,28 @@ import java.util.ArrayList;
 public class MainActivity extends ActionBarActivity {
 
     DBController db;
+    ListAdapter listAdapter;
+    ListView scoreList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db=new DBController(this);
+
         Utilities.sp=this.getSharedPreferences("pop",0);
         Utilities.locked=Utilities.sp.getInt("locked",0);
+        db=new DBController(this);
+        scoreList=(ListView)findViewById(R.id.scoreList);
+
+
+
 
         new getScoresfromServer().execute();
         //ChartDisplay();
 
     }
+
+
 
     void setdepartments(String s)
     {
@@ -69,27 +81,45 @@ public class MainActivity extends ActionBarActivity {
                     db.updateScores(dp[i]);
             }
             Utilities.departments=dp;
+            Utilities.sortScores();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
 
+        //if Utilities.locked==0
+        Utilities.locked=1;
         SharedPreferences.Editor editor = Utilities.sp.edit();
         editor.putInt("locked", 1);
         editor.apply();
+
+        Toast.makeText(MainActivity.this,"Updated :D",Toast.LENGTH_SHORT).show();
         showscore();
     }
 
+
+
     void showscore()
     {
-        TextView t=(TextView) findViewById(R.id.response);
-        t.setText(Utilities.departments[0].name+ Utilities.departments[0].score);
+        listAdapter=new ListAdapter(MainActivity.this);
+        scoreList.setAdapter(listAdapter);
+
+        scoreList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(MainActivity.this,Utilities.departments[i].name,Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
-    void updatescores()
+    void oldscores()
     {
-            Toast.makeText(MainActivity.this,"DBupdate",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"Failed to update :/",Toast.LENGTH_SHORT).show();
+            Utilities.departments=db.getAllScores();
+            Utilities.sortScores();
+            showscore();
     }
 
 
@@ -105,10 +135,16 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            if(Utilities.locked==0)
+            //Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
+            if(!s.equals("bleh"))
             setdepartments(s);
-            else
-                updatescores();
+            else {
+                if(Utilities.locked!=0)
+                oldscores();
+                else
+                    Toast.makeText(MainActivity.this,"Internet?",Toast.LENGTH_SHORT).show();
+            }
+
 
         }
 
@@ -196,6 +232,12 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_refresh) {
+
+
+            new getScoresfromServer().execute();
             return true;
         }
 
