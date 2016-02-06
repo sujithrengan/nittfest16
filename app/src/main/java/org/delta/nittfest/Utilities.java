@@ -28,12 +28,20 @@ public class Utilities {
     public static void sortScores()
     {
 
-        for(int i=0;i<departments.length;i++)
-        {
-            departments[i].old_position=i;
-        }
+
 
         Arrays.sort(departments, new ScoreComparator());
+    }
+
+    public static void init(DBController db)
+    {
+        departments=new Department[12];
+
+    if(locked==0) {
+        for (int i = 0; i < 12; i++)
+            departments[i].old_position=i;
+    }
+        else departments=db.getAllScores();
     }
 }
 

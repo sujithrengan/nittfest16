@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
+
+
 public class MainActivity extends ActionBarActivity {
 
     DBController db;
@@ -55,6 +57,7 @@ public class MainActivity extends ActionBarActivity {
 
 
 
+        Utilities.init(db);
         new getScoresfromServer().execute();
         //ChartDisplay();
 
@@ -65,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
     void setdepartments(String s)
     {
 
-           Department dp[]=new Department[12];
+
         //t.setText(s);
         JSONArray jsonArray= null;
         JSONObject jsonObject=null;
@@ -74,13 +77,14 @@ public class MainActivity extends ActionBarActivity {
             for(int i=0;i<jsonArray.length();i++)
             {
                     jsonObject=jsonArray.getJSONObject(i);
-                dp[i]=new Department(jsonObject.get("departmentName").toString(),Float.valueOf(jsonObject.get("score").toString()));
-                if(Utilities.locked==0)
-                db.insertDepartment(dp[i]);
-                else
-                    db.updateScores(dp[i]);
+                Utilities.departments[i].SetDepartment(jsonObject.get("departmentName").toString(),Float.valueOf(jsonObject.get("score").toString()));
+
             }
-            Utilities.departments=dp;
+            if(Utilities.locked==0)
+                db.insertDepartment(Utilities.departments);
+            else
+                db.updateScores(Utilities.departments);
+
             Utilities.sortScores();
 
         } catch (JSONException e) {
@@ -112,6 +116,7 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(MainActivity.this,Utilities.departments[i].name,Toast.LENGTH_SHORT).show();
             }
         });
+        Utilities.locked=1;
 
     }
 
@@ -130,6 +135,12 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(Utilities.locked!=0)
+            for(int i=0;i<Utilities.departments.length;i++)
+            {
+                Utilities.departments[i].old_position=i;
+            }
+
         }
 
         @Override
