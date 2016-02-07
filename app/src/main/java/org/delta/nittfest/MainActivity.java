@@ -76,9 +76,9 @@ public class MainActivity extends ActionBarActivity {
                     jsonObject=jsonArray.getJSONObject(i);
                 dp[i]=new Department(jsonObject.get("departmentName").toString(),Float.valueOf(jsonObject.get("score").toString()));
                 if(Utilities.locked==0)
-                db.insertDepartment(dp[i]);
+                db.insertDepartment(dp);
                 else
-                    db.updateScores(dp[i]);
+                    db.updateScores(dp);
             }
             Utilities.departments=dp;
             Utilities.sortScores();

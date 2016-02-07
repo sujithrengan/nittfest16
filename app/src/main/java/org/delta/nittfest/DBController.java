@@ -42,14 +42,16 @@ public class DBController  extends SQLiteOpenHelper {
 
     /**
      * Inserts User into SQLite DB
-     * @param queryValues
+     * @param
      */
-    public void insertDepartment(Department department) {
+    public void insertDepartment(Department[] department) {
         SQLiteDatabase database = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("departmentName", department.name);
-        values.put("score",department.score);
-        database.insert("scores", null, values);
+        for(int i=0;i<department.length;i++) {
+            ContentValues values = new ContentValues();
+            values.put("departmentName", department[i].name);
+            values.put("score", department[i].score);
+            database.insert("scores", null, values);
+        }
         database.close();
         Log.e("DB","inserted");
     }
@@ -73,14 +75,16 @@ public class DBController  extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void updateScores(Department department) {
+    public void updateScores(Department[] department) {
         SQLiteDatabase database = this.getWritableDatabase();
-        String dn=department.name;
-        ContentValues values = new ContentValues();
-        String where = "departmentName" + "= '" + dn+"'";
-        values.put("departmentName", department.name);
-        values.put("score", department.score);
-        database.update("scores", values, where,null);
+        for(int i=0;i<department.length;i++) {
+            String dn = department[i].name;
+            ContentValues values = new ContentValues();
+            String where = "departmentName" + "= '" + dn + "'";
+            values.put("departmentName", department[i].name);
+            values.put("score", department[i].score);
+            database.update("scores", values, where, null);
+        }
         Log.e("DB","updated");
         database.close();
     }
