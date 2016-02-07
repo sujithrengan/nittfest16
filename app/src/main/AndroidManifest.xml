@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.delta.nittfest" >
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="org.delta.nittfest.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="org.delta.nittfest.permission.C2D_MESSAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo_nc"
@@ -17,6 +26,27 @@
             </intent-filter>
 
         </activity>
+
+
+        <activity android:name=".Notify" >
+            <intent-filter>
+                <action android:name="com.delta.nittfest.NOTIFICATION_ACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.example.shreenivas.gcmtest" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".GCMMessagerHandler" />
 
     </application>
 

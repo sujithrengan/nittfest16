@@ -13,10 +13,13 @@ import java.util.Comparator;
 public class Utilities {
 
     public static String status;
+    public static String gcm_regid;
     public static int locked=0;
     public static String url_scores="http://192.168.1.104/nittfest/scores.php";
     public static Department[] departments;
+
     public static SharedPreferences sp;
+    public static String GCM_URL;
 
     static class ScoreComparator implements Comparator<Department> {
         @Override

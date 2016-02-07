@@ -28,6 +28,7 @@ public class DBController  extends SQLiteOpenHelper {
         database.execSQL(query);
         query = "CREATE TABLE notifs ( notifText TEXT,time TEXT )";
         database.execSQL(query);
+
     }
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {

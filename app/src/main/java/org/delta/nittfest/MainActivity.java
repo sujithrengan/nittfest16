@@ -1,6 +1,8 @@
 package org.delta.nittfest;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -21,6 +23,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,25 +35,45 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends ActionBarActivity {
 
     DBController db;
+    String regid = new String();
     ListAdapter listAdapter;
+    public GoogleCloudMessaging gcm;
+    AsyncTask<Void, Void, Void> mRegisterTask;
     ListView scoreList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        scoreList=(ListView)findViewById(R.id.scoreList);
 
         Utilities.sp=this.getSharedPreferences("pop",0);
         Utilities.locked=Utilities.sp.getInt("locked",0);
+        Utilities.gcm_regid=Utilities.sp.getString("gcm_regid","null");
+
         db=new DBController(this);
-        scoreList=(ListView)findViewById(R.id.scoreList);
+        if(Utilities.gcm_regid.equals("null"))
+        {
+                gcmreg();
+        }
+
 
 
 
@@ -59,7 +82,121 @@ public class MainActivity extends ActionBarActivity {
         //ChartDisplay();
 
     }
+    public void gcmreg()
+    {
 
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    regid = gcm.register("835229264934");
+                    msg = regid;
+                    pregister(MainActivity.this, regid);
+
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    Log.e("gcm_status", msg);
+                }
+                return msg;
+            }
+        }.execute(null, null, null);
+    }
+
+    void pregister(final Context context, final String regId) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                Log.e("gcm_status", "registering device (regId = " + regId + ")");
+                String serverUrl = Utilities.GCM_URL;
+                Map<String, String> paramss = new HashMap<String, String>();
+                paramss.put("gcm_id", regId);
+                for (int i = 1; i <= 1; i++) {
+                    Log.e("gcm_status", "Attempt #" + i + " to register");
+                    try {
+                        post(serverUrl, paramss);
+                        msg="registered";
+                        return msg;
+                    } catch (IOException e) {
+                        Log.e("gcm_status", "Failed to register on attempt " + i + ":" + e);
+                        msg="null";
+                    }
+                }
+                return msg;
+            }
+            @Override
+            protected void onPostExecute(String msg) {
+
+                SharedPreferences.Editor editor = Utilities.sp.edit();
+                editor.putString("gcm_regid", msg);
+                editor.apply();
+            }
+        }.execute(null, null, null);
+     }
+
+    private void post(String endpoint, Map<String, String> params)
+            throws IOException {
+
+        URL url;
+        try {
+            url = new URL(endpoint);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("invalid url: " + endpoint);
+        }
+        StringBuilder bodyBuilder = new StringBuilder();
+        Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
+        // constructs the POST body using the parameters
+        while (iterator.hasNext()) {
+            Map.Entry<String, String> param = iterator.next();
+            bodyBuilder.append(param.getKey()).append('=')
+                    .append(param.getValue());
+            if (iterator.hasNext()) {
+                bodyBuilder.append('&');
+            }
+        }
+        String body = bodyBuilder.toString();
+        byte[] bytes = body.getBytes();
+        Log.e("gcm_status", "Posting '" + body + "' to " + url);
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setFixedLengthStreamingMode(bytes.length);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type",
+                    "application/x-www-form-urlencoded;charset=UTF-8");
+            // post the request
+            OutputStream out = conn.getOutputStream();
+            out.write(bytes);
+            InputStream in = conn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    Log.e("check", line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            out.close();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
 
 
     void setdepartments(String s)
