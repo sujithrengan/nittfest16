@@ -61,7 +61,7 @@ public class ListAdapter extends BaseAdapter{
 
 
         score.setText(String.valueOf(Utilities.departments[position].score));
-        departmentName.setText(Utilities.departments[position].name+"["+Utilities.departments[position].old_position+"]");
+        departmentName.setText(Utilities.departments[position].name);
 
 
         //Log.e("adapter",Utilities.departments[position].name);
