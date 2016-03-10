@@ -3,7 +3,7 @@
     android:id="@+id/li"
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
-    android:background="@color/saffron">
+    android:background="@color/ColorPrimary">
 
     <RelativeLayout
         android:layout_width="match_parent"

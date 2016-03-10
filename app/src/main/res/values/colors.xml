@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="saffron">#F4B63E</color>
-    <color name="eggplant">#663D4E</color>
-    <color name="sienna">#EB6460</color>
-    <color name="greensea">#16a085</color>
     <color name="belizehole">#2980b9</color>
+    <color name="ColorPrimary">#1c75bc</color>
+    <color name="ColorPrimaryDark">#000000</color>
+
+    <color name="pragyan_gold"> #CDB45B</color>
+    <color name="pragyan_grey">#A9AAAE</color>
+    <color name="pragyan_dark_grey">#4C4D51</color>
 </resources>
