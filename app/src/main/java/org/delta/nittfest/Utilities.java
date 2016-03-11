@@ -14,7 +14,7 @@ public class Utilities {
 
     public static String status;
     public static int locked=0;
-    public static String url_scores="https://8f543305.ngrok.io/nittfest/scores.php";
+    public static String url_scores="http://273b2d4b.ngrok.io/nittfest/scores.php";
     public static Department[] departments;
     public static SharedPreferences sp;
 

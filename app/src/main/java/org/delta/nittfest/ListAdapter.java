@@ -1,71 +1,127 @@
 package org.delta.nittfest;
 
-/**
- * Created by HP on 06-02-2016.
- */
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Date;
 
-public class ListAdapter extends BaseAdapter{
-    private final Context context;
+/**
+ * Created by HP on 19-02-2016.
+ */
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
+
+    private final int mode;
+    Typeface t;
+    Context context;
 
 
-    public ListAdapter(Context context) {
+
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView Dept;
+        public TextView Score;
+        public CardView rootLayout;
+
+        public ImageView unread;
+        public ViewHolder(View v) {
+            super(v);
+            Dept = (TextView)v.findViewById(R.id.Dept);
+            Score = (TextView)v.findViewById(R.id.Score);
+            unread=(ImageView)v.findViewById(R.id.unreadview);
+            rootLayout=(CardView)v.findViewById(R.id.rootlayout);
 
 
+        }
+    }
 
-        this.context = context;
+    // Provide a suitable constructor (depends on the kind of dataset)
+    public ListAdapter(Context context,int mode) {
+
+        this.mode=mode;
+        this.context=context;
+        this.t=Typeface.createFromAsset(context.getAssets(),"fonts/hn.otf");
+    }
+
+    // Create new views (invoked by the layout manager)
+    @Override
+    public ListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                         int viewType) {
+        // create a new view
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.list_item, parent, false);
+        // set the view's size, margins, paddings and layout parameters
+
+        ViewHolder vh = new ViewHolder(v);
+        return vh;
+    }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        // - get element from your dataset at this position
+        // - replace the contents of the view with that element
+
+        holder.Score.setTypeface(t);
+        holder.Dept.setTypeface(t);
+        holder.Score.setText(String.valueOf(Utilities.departments[position].score));
+        holder.Dept.setText(Utilities.departments[position].name);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
+        params.bottomMargin=0;
+        params.topMargin=0;
+
+        if(position==11)
+            params.bottomMargin=50;
+
+        if(position==0)
+            params.topMargin=25;
+
+
+        holder.Dept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context,"Dept",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        holder.Score.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Toast.makeText(context,"Score",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
 
     }
 
+    // Return the size of your dataset (invoked by the layout manager)
     @Override
-    public int getCount() {
-       //return 0;
-        return Utilities.departments.length;
-    }
-
-    @Override
-    public Department getItem(int i) {
-        return Utilities.departments[i];
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.list_item, parent, false);
-        TextView score = (TextView) rowView.findViewById(R.id.score);
-        TextView departmentName = (TextView) rowView.findViewById(R.id.departmentName);
-        ImageView delta =(ImageView) rowView.findViewById(R.id.delta);
-        if(position<Utilities.departments[position].old_position)
-            delta.setBackgroundResource(R.drawable.up);
-            //delta.setVisibility(View.INVISIBLE);
-         if(position>Utilities.departments[position].old_position)
-            delta.setBackgroundResource(R.drawable.down);
-        else if(position==Utilities.departments[position].old_position)
-            delta.setBackgroundResource(R.drawable.same);
-
-
-        score.setText(String.valueOf(Utilities.departments[position].score));
-        departmentName.setText(Utilities.departments[position].name);
-
-
-        //Log.e("adapter",Utilities.departments[position].name);
-
-        return rowView;
+    public int getItemCount() {
+        if(mode==0)
+            return 0;
+        else
+        return 12;
     }
 }

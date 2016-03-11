@@ -1,11 +1,15 @@
 package org.delta.nittfest;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,27 +39,84 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.FadeInAnimator;
+
 
 public class MainActivity extends ActionBarActivity {
 
     DBController db;
     ListAdapter listAdapter;
-    ListView scoreList;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private LinearLayoutManager mLayoutManager;
+    private ListAdapter mAdapter;
+    private ProgressDialog myPd_ring;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
-        Utilities.sp=this.getSharedPreferences("pop",0);
+        Utilities.sp=this.getSharedPreferences("pop", 0);
         Utilities.locked=Utilities.sp.getInt("locked",0);
         db=new DBController(this);
-        scoreList=(ListView)findViewById(R.id.scoreList);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+        //mSwipeRefreshLayout.setColorScheme(R.color.color_scheme_1_1, R.color.color_scheme_1_2,
+          //      R.color.color_scheme_1_3, R.color.color_scheme_1_4);
+
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+
+
+        //Initalise Dummy List
+
+
+        if(Utilities.locked==0) {
+            mAdapter = new ListAdapter(MainActivity.this, 0);
+            mRecyclerView.setItemAnimator(new FadeInAnimator());
+            AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
+            ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+            //        scaleAdapter.setFirstOnly(false);
+            //        scaleAdapter.setInterpolator(new OvershootInterpolator());
+            mRecyclerView.setAdapter(scaleAdapter);
+
+        }
+        else
+        {
+            Utilities.departments=db.getAllScores();
+            Utilities.sortScores();
+            showscore();
+        }
+
+
+
+        // OnRefresh Action
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+
+                new getScoresfromServer().execute();
+
+            }
+        });
 
 
 
 
-        new getScoresfromServer().execute();
+        myPd_ring = new ProgressDialog(MainActivity.this);
+        myPd_ring.setMessage("Fetching data...");
+        myPd_ring.setCancelable(false);
+        myPd_ring.setCanceledOnTouchOutside(false);
+        myPd_ring.show();
+       new getScoresfromServer().execute();
         //ChartDisplay();
 
     }
@@ -65,7 +126,8 @@ public class MainActivity extends ActionBarActivity {
     void setdepartments(String s)
     {
 
-           Department dp[]=new Department[12];
+        boolean set=true;
+        Department dp[]=new Department[12];
         //t.setText(s);
         JSONArray jsonArray= null;
         JSONObject jsonObject=null;
@@ -73,7 +135,7 @@ public class MainActivity extends ActionBarActivity {
             jsonArray = new JSONArray(s);
             for(int i=0;i<jsonArray.length();i++)
             {
-                    jsonObject=jsonArray.getJSONObject(i);
+                jsonObject=jsonArray.getJSONObject(i);
                 dp[i]=new Department(jsonObject.get("departmentName").toString(),Float.valueOf(jsonObject.get("score").toString()));
 
             }
@@ -83,21 +145,31 @@ public class MainActivity extends ActionBarActivity {
                 db.updateScores(dp);
 
             Utilities.departments=dp;
+
+
+
             Utilities.sortScores();
+            Utilities.locked=1;
+            SharedPreferences.Editor editor = Utilities.sp.edit();
+            editor.putInt("locked", 1);
+            editor.apply();
+
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("Async","catched");
+            if(Utilities.locked!=0)
+            oldscores();
+            set=false;
         }
 
 
 
         //if Utilities.locked==0
-        Utilities.locked=1;
-        SharedPreferences.Editor editor = Utilities.sp.edit();
-        editor.putInt("locked", 1);
-        editor.apply();
 
-        Toast.makeText(MainActivity.this,"Updated :D",Toast.LENGTH_SHORT).show();
+
+        if(set)
+        Toast.makeText(MainActivity.this,"Updated xD",Toast.LENGTH_SHORT).show();
         showscore();
     }
 
@@ -105,45 +177,50 @@ public class MainActivity extends ActionBarActivity {
 
     void showscore()
     {
-        listAdapter=new ListAdapter(MainActivity.this);
-        scoreList.setAdapter(listAdapter);
+        mAdapter=new ListAdapter(MainActivity.this,1);
+        mRecyclerView.setItemAnimator(new FadeInAnimator());
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
+        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+        //        scaleAdapter.setFirstOnly(false);
+        //        scaleAdapter.setInterpolator(new OvershootInterpolator());
+        mRecyclerView.setAdapter(scaleAdapter);
 
-        scoreList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this,Utilities.departments[i].name,Toast.LENGTH_SHORT).show();
-            }
-        });
+        mSwipeRefreshLayout.setRefreshing(false);
 
     }
 
     void oldscores()
     {
-            Toast.makeText(MainActivity.this,"Failed to update :/",Toast.LENGTH_SHORT).show();
-            Utilities.departments=db.getAllScores();
-            Utilities.sortScores();
-            showscore();
+        Toast.makeText(MainActivity.this, "Failed to update :/",Toast.LENGTH_SHORT).show();
+        Utilities.departments=db.getAllScores();
+        Utilities.sortScores();
+        showscore();
     }
 
 
-    class getScoresfromServer extends AsyncTask<Void,String,String>
-    {
+    class getScoresfromServer extends AsyncTask<Void, String, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            myPd_ring.dismiss();
 
             //Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
-            if(!s.equals("bleh"))
-            setdepartments(s);
+            if(!s.equals("bleh")) {
+
+                //mAdapter = new ListAdapter(MainActivity.this);
+                setdepartments(s);
+            }
             else {
                 if(Utilities.locked!=0)
-                oldscores();
+                    oldscores();
                 else
                     Toast.makeText(MainActivity.this,"Internet?",Toast.LENGTH_SHORT).show();
             }
@@ -165,7 +242,7 @@ public class MainActivity extends ActionBarActivity {
                 httpEntity=response.getEntity();
                 res= EntityUtils.toString(httpEntity);
 
-                Log.e("Async", "inside");
+                Log.e("Async", res);
 
             } catch (IOException e) {
                 Log.e("Async", "catched");
