@@ -3,6 +3,7 @@
 
     <string name="app_name">Nittfest</string>
     <string name="action_settings">Settings</string>
+    <string name="made_with">Made with \u2665 by Delta Force</string>
 
 <string-array name="departments">
     <item>ARCHI</item>
@@ -17,6 +18,7 @@
     <item>MECH</item>
     <item>MME</item>
     <item>PROD</item>
+
 </string-array>
 
 </resources>

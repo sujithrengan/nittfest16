@@ -6,13 +6,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,6 +39,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         // each data item is just a string in this case
         public TextView Dept;
         public TextView Score;
+        public CardView rootLayout;
 
         public ImageView unread;
         public ViewHolder(View v) {
@@ -42,6 +47,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             Dept = (TextView)v.findViewById(R.id.Dept);
             Score = (TextView)v.findViewById(R.id.Score);
             unread=(ImageView)v.findViewById(R.id.unreadview);
+            rootLayout=(CardView)v.findViewById(R.id.rootlayout);
 
 
         }
@@ -78,12 +84,22 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
         holder.Dept.setTypeface(t);
         holder.Score.setText(String.valueOf(Utilities.departments[position].score));
         holder.Dept.setText(Utilities.departments[position].name);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
+        params.bottomMargin=0;
+        params.topMargin=0;
+
+        if(position==11)
+            params.bottomMargin=50;
+
+        if(position==0)
+            params.topMargin=25;
+
 
         holder.Dept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
+                Toast.makeText(context,"Dept",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -91,7 +107,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
 
-                            }
+                Toast.makeText(context,"Score",Toast.LENGTH_SHORT).show();
+
+            }
         });
 
 
