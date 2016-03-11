@@ -73,27 +73,28 @@ public class MainActivity extends ActionBarActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
-        //GetContactList on a new Thread
-
-
-
-        //GetChatList on a new thread
-
-
-
-                new getScoresfromServer();
-
-
 
         //Initalise Dummy List
 
-        mAdapter = new ListAdapter(MainActivity.this,0);
-        mRecyclerView.setItemAnimator(new FadeInAnimator());
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
-        ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-        //        scaleAdapter.setFirstOnly(false);
-        //        scaleAdapter.setInterpolator(new OvershootInterpolator());
-        mRecyclerView.setAdapter(scaleAdapter);
+
+        if(Utilities.locked==0) {
+            mAdapter = new ListAdapter(MainActivity.this, 0);
+            mRecyclerView.setItemAnimator(new FadeInAnimator());
+            AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
+            ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+            //        scaleAdapter.setFirstOnly(false);
+            //        scaleAdapter.setInterpolator(new OvershootInterpolator());
+            mRecyclerView.setAdapter(scaleAdapter);
+
+        }
+        else
+        {
+            Utilities.departments=db.getAllScores();
+            Utilities.sortScores();
+            showscore();
+        }
+
+
 
         // OnRefresh Action
 
@@ -125,6 +126,7 @@ public class MainActivity extends ActionBarActivity {
     void setdepartments(String s)
     {
 
+        boolean set=true;
         Department dp[]=new Department[12];
         //t.setText(s);
         JSONArray jsonArray= null;
@@ -143,21 +145,31 @@ public class MainActivity extends ActionBarActivity {
                 db.updateScores(dp);
 
             Utilities.departments=dp;
+
+
+
             Utilities.sortScores();
+            Utilities.locked=1;
+            SharedPreferences.Editor editor = Utilities.sp.edit();
+            editor.putInt("locked", 1);
+            editor.apply();
+
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("Async","catched");
+            if(Utilities.locked!=0)
+            oldscores();
+            set=false;
         }
 
 
 
         //if Utilities.locked==0
-        Utilities.locked=1;
-        SharedPreferences.Editor editor = Utilities.sp.edit();
-        editor.putInt("locked", 1);
-        editor.apply();
 
-        Toast.makeText(MainActivity.this,"Updated :D",Toast.LENGTH_SHORT).show();
+
+        if(set)
+        Toast.makeText(MainActivity.this,"Updated xD",Toast.LENGTH_SHORT).show();
         showscore();
     }
 
@@ -230,7 +242,7 @@ public class MainActivity extends ActionBarActivity {
                 httpEntity=response.getEntity();
                 res= EntityUtils.toString(httpEntity);
 
-                Log.e("Async", "inside");
+                Log.e("Async", res);
 
             } catch (IOException e) {
                 Log.e("Async", "catched");
