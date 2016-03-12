@@ -79,6 +79,7 @@ public class MainActivity extends ActionBarActivity {
 
         if(Utilities.locked==0) {
             mAdapter = new ListAdapter(MainActivity.this, 0);
+            Log.e("Async","locked");
             mRecyclerView.setItemAnimator(new FadeInAnimator());
             AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
             ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
@@ -219,10 +220,13 @@ public class MainActivity extends ActionBarActivity {
                 setdepartments(s);
             }
             else {
-                if(Utilities.locked!=0)
+                if (Utilities.locked != 0)
                     oldscores();
-                else
-                    Toast.makeText(MainActivity.this,"Internet?",Toast.LENGTH_SHORT).show();
+                else {
+                    Toast.makeText(MainActivity.this, "Internet?", Toast.LENGTH_SHORT).show();
+                    findViewById(R.id.empty).setVisibility(View.VISIBLE);
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
 
 

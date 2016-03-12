@@ -22,6 +22,14 @@
         android:gravity="center"
         android:layout_marginBottom="10px"
         android:layout_gravity="bottom"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pliss check your internet and try again."
+        android:gravity="center"
+        android:visibility="invisible"
+        android:id="@+id/empty"
+        android:layout_gravity="center"/>
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/activity_main_swipe_refresh_layout"
         android:layout_width="match_parent"
