@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:text="@string/made_with"
         android:gravity="center"
+        android:visibility="invisible"
         android:layout_marginBottom="10px"
         android:layout_gravity="bottom"/>
     <TextView
