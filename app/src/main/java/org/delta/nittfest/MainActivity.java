@@ -132,28 +132,36 @@ public class MainActivity extends ActionBarActivity {
         //t.setText(s);
         JSONArray jsonArray= null;
         JSONObject jsonObject=null;
+        int status;
+        JSONObject data=null;
         try {
-            jsonArray = new JSONArray(s);
-            for(int i=0;i<jsonArray.length();i++)
-            {
-                jsonObject=jsonArray.getJSONObject(i);
-                dp[i]=new Department(jsonObject.get("departmentName").toString(),Float.valueOf(jsonObject.get("score").toString()));
+            data=new JSONObject(s);
+            status= data.getInt("status");
 
+
+            if(status==200) {
+                jsonArray = data.getJSONArray("data");
+
+                //jsonArray = new JSONArray(s);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    jsonObject = jsonArray.getJSONObject(i);
+                    dp[i] = new Department(jsonObject.get("dept").toString(), Float.valueOf(jsonObject.get("points").toString()));
+
+                }
+                if (Utilities.locked == 0)
+                    db.insertDepartment(dp);
+                else
+                    db.updateScores(dp);
+
+                Utilities.departments = dp;
+
+
+                Utilities.sortScores();
+                Utilities.locked = 1;
+                SharedPreferences.Editor editor = Utilities.sp.edit();
+                editor.putInt("locked", 1);
+                editor.apply();
             }
-            if(Utilities.locked==0)
-                db.insertDepartment(dp);
-            else
-                db.updateScores(dp);
-
-            Utilities.departments=dp;
-
-
-
-            Utilities.sortScores();
-            Utilities.locked=1;
-            SharedPreferences.Editor editor = Utilities.sp.edit();
-            editor.putInt("locked", 1);
-            editor.apply();
 
 
         } catch (JSONException e) {
