@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -15,6 +16,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -22,10 +24,13 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(':MPChartLibrary')
+    //compile 'com.android.support:appcompat-v7:23.1.1'
+
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'jp.wasabeef:recyclerview-animators:2.2.0'
+    //compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+    compile 'com.google.android.gms:play-services:8.3.0'
+
     compile 'com.android.support:cardview-v7:23.+'
-    compile 'com.android.support:support-v4:23.+'
+    //compile 'com.android.support:support-v4:23.+'
 }

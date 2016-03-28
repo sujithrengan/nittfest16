@@ -14,6 +14,12 @@ public class Utilities {
 
     public static String status;
     public static int locked=0;
+
+    public static int gcm_registered = 0;
+    public static int pid;
+    public static String url_gcm = "http://api.nittfest.in/simple-gcm/register.php";
+
+
     public static String url_scores="http://api.nittfest.in/leaderboard";
     public static Department[] departments;
     public static SharedPreferences sp;

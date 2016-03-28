@@ -26,7 +26,7 @@ public class DBController  extends SQLiteOpenHelper {
         String query;
         query = "CREATE TABLE scores ( departmentName TEXT, score DECIMAL(10,2) )";
         database.execSQL(query);
-        query = "CREATE TABLE notifs ( notifText TEXT,time TEXT )";
+        query = "CREATE TABLE notifs ( notifText TEXT,time TEXT,title TEXT)";
         database.execSQL(query);
     }
     @Override
@@ -61,6 +61,8 @@ public class DBController  extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("notifText", queryValues.get("notifText"));
         values.put("time", queryValues.get("time"));
+        values.put("title", queryValues.get("title"));
+
         //values.put("index", queryValues.get("index"));
         database.insert("notifs", null, values);
         database.close();
@@ -71,8 +73,29 @@ public class DBController  extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         //database.insert("notifs", null, values);
-        database.delete("notifs", "notifText"+"= '"+notiftxt+"'",null);
+        database.delete("notifs", "notifText" + "= '" + notiftxt+"'",null);
         database.close();
+    }
+
+
+    public ArrayList<HashMap<String, String>> getAllNotifs() {
+        ArrayList<HashMap<String, String>> notifsList;
+        notifsList = new ArrayList<HashMap<String, String>>();
+        String selectQuery = "SELECT  * FROM notifs";
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put("notifText", cursor.getString(0));
+                map.put("time", cursor.getString(1));
+                map.put("title", cursor.getString(2));
+
+                notifsList.add(map);
+            } while (cursor.moveToNext());
+        }
+        database.close();
+        return notifsList;
     }
 
     public void updateScores(Department[] department) {
@@ -130,7 +153,7 @@ public class DBController  extends SQLiteOpenHelper {
         return departments;
     }
 
-    public ArrayList<HashMap<String, String>> getAllNotifs() {
+    /*public ArrayList<HashMap<String, String>> getAllNotifs() {
         ArrayList<HashMap<String, String>> notifsList;
         notifsList = new ArrayList<HashMap<String, String>>();
         String selectQuery = "SELECT  * FROM notifs";
@@ -149,5 +172,6 @@ public class DBController  extends SQLiteOpenHelper {
         database.close();
         return notifsList;
     }
+    */
 
 }

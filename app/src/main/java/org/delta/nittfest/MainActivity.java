@@ -19,13 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -73,6 +66,7 @@ public class MainActivity extends ActionBarActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
+        GCMRegisterService.register(this);
 
         //Initalise Dummy List
 
@@ -264,6 +258,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /*
     void ChartDisplay()
     {
         LineChart chart =null;//= (LineChart) findViewById(R.id.chart);
@@ -306,7 +301,7 @@ public class MainActivity extends ActionBarActivity {
 
         chart.animateY(1000);
     }
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
