@@ -13,12 +13,13 @@ public class Events {
     int _credits;
     String _desc;
     int _won;
+    public int _lockstatus;
     public Events(){
 
     }
 
     // constructor
-    public Events(int id, String name, String cluster,int status,int credits,String desc,int won){
+    public Events(int id, String name, String cluster,int status,int credits,String desc,int won,int lockstatus){
         this._id = id;
         this._name = name;
         this._cluster = cluster;
@@ -26,6 +27,7 @@ public class Events {
         this._credits = credits;
         this._desc=desc;
         this._won=won;
+        this._lockstatus=lockstatus;
 
     }
 

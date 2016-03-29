@@ -29,7 +29,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     static final int TYPE_FOOTER=3;
     static final int TYPE_DATA=2;
 
-    List<Events> eventList=null;
+    //List<Events> eventList=null;
 
     int vis_pos=-1;
     int vis_count=0;
@@ -92,9 +92,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public EventAdapter(Context context, int mode, List<Events> eventList,int Visibility) {
+    public EventAdapter(Context context, int mode,int Visibility) {
 
-        this.eventList=eventList;
+        //this.eventList=eventList;
         this._Visibility = Visibility;
         this.mode=mode;
         this.context=context;
@@ -102,8 +102,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.footerparams=new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        for(int i=0;i<eventList.size();i++)
-            Log.e("evelist",eventList.get(i)._name);
+        //for(int i=0;i<eventList.size();i++)
+          //  Log.e("evelist",eventList.get(i)._name);
     }
 
     // Create new views (invoked by the layout manager)
@@ -148,7 +148,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (position==0)
             return TYPE_HEADER;
 
-        else if(position<eventList.size()+1)
+        else if(position<21)
             return  TYPE_DATA;
 
         else
@@ -177,13 +177,13 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.cluster.setTypeface(t);
             holder.credit.setTypeface(t);
 
-            holder.title.setText(eventList.get(position)._name);
-            if(eventList.get(position)._status==0)
+            holder.title.setText(Utilities.events[position]._name);
+            if(Utilities.events[position]._status==-1)
             holder.credit.setText("Place your bets");
             else
                 holder.credit.setText("Bets placed");
             //Log.e("notif", eventList.get(position).get(KEY_TITLE));
-            holder.cluster.setText(eventList.get(position)._cluster);
+            holder.cluster.setText(Utilities.events[position]._cluster);
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
             params.bottomMargin = 0;
             params.topMargin = 0;
@@ -195,7 +195,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
                             //TODO:Check bet_status and decide
-                            if (eventList.get(position)._status!=0) {
+                            if (Utilities.events[position]._status!=-1) {
                                 vis_pos=posit;
 
                                 if (vis_count%2==0) {
@@ -249,7 +249,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             holder.Header.setTypeface(t);
             //TODO:Set the credit amount here
-            holder.Header.setText("Credits:"+" 99999");
+            holder.Header.setText("Credits:"+String.valueOf(Utilities.credits_available));
             holder.goback.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -269,7 +269,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(mode==0)
             return 0;
         else
-            return eventList.size()+2;
+            return 22;
     }
 
 

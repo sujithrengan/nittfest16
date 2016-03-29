@@ -22,8 +22,10 @@ import android.widget.Toast;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
@@ -224,11 +227,14 @@ public class MainActivity extends ActionBarActivity {
             if(!s.equals("bleh")) {
 
                 //mAdapter = new ListAdapter(MainActivity.this);
+                findViewById(R.id.empty).setVisibility(View.INVISIBLE);
                 setdepartments(s);
             }
             else {
-                if (Utilities.locked != 0)
+                if (Utilities.locked != 0) {
+                    findViewById(R.id.empty).setVisibility(View.INVISIBLE);
                     oldscores();
+                }
                 else {
                     Toast.makeText(MainActivity.this, "Internet?", Toast.LENGTH_SHORT).show();
                     findViewById(R.id.empty).setVisibility(View.VISIBLE);
@@ -335,4 +341,6 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
