@@ -29,6 +29,10 @@
             android:label="Notifications" >
         </activity>
         <activity
+            android:name=".BettingScreen"
+            android:label="Betting" >
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:label="Login" >
         </activity>

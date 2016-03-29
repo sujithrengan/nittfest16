@@ -5,17 +5,23 @@ package org.delta.nittfest;
  */
 
 
-        import java.util.ArrayList;
-        import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-        import android.content.ContentValues;
-        import android.content.Context;
-        import android.database.Cursor;
-        import android.database.sqlite.SQLiteDatabase;
-        import android.database.sqlite.SQLiteOpenHelper;
-        import android.util.Log;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DBController  extends SQLiteOpenHelper {
+    private static final String KEY_ID = "id";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_CLUSTER = "cluster";
+    private static final String KEY_STATUS = "status";
+    private static final String KEY_CREDITS = "credits";
 
     public DBController(Context applicationcontext) {
         super(applicationcontext, "user.db", null, 1);
@@ -28,6 +34,13 @@ public class DBController  extends SQLiteOpenHelper {
         database.execSQL(query);
         query = "CREATE TABLE notifs ( notifText TEXT,time TEXT,title TEXT)";
         database.execSQL(query);
+        String CREATE_EVENTS_TABLE = "CREATE TABLE " + "events" + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_NAME + " TEXT,"
+                + KEY_CLUSTER + " TEXT"
+                + KEY_STATUS + " INTEGER"
+                + KEY_CREDITS + " INTEGER" + ")";
+        database.execSQL(CREATE_EVENTS_TABLE);
     }
     @Override
     public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {
@@ -36,6 +49,8 @@ public class DBController  extends SQLiteOpenHelper {
         database.execSQL(query);
         query = "DROP TABLE IF EXISTS notifs";
         database.execSQL(query);
+        onCreate(database);
+        database.execSQL("DROP TABLE IF EXISTS events");
         onCreate(database);
     }
 
@@ -53,7 +68,7 @@ public class DBController  extends SQLiteOpenHelper {
             database.insert("scores", null, values);
         }
         database.close();
-        Log.e("DB","inserted");
+        Log.e("DB", "inserted");
     }
 
     public void insertNotif(HashMap<String, String> queryValues) {
@@ -73,7 +88,7 @@ public class DBController  extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         //database.insert("notifs", null, values);
-        database.delete("notifs", "notifText" + "= '" + notiftxt+"'",null);
+        database.delete("notifs", "notifText" + "= '" + notiftxt + "'", null);
         database.close();
     }
 
@@ -108,7 +123,7 @@ public class DBController  extends SQLiteOpenHelper {
             values.put("score", department[i].score);
             database.update("scores", values, where, null);
         }
-        Log.e("DB","updated");
+        Log.e("DB", "updated");
         database.close();
     }
     /**
@@ -151,6 +166,60 @@ public class DBController  extends SQLiteOpenHelper {
         }
         database.close();
         return departments;
+    }
+    public void addEvent(Events events) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID,events.get_id());
+        values.put(KEY_NAME, events.get_name());
+        values.put(KEY_CLUSTER, events.get_cluster());
+        values.put(KEY_STATUS,events.get_status());
+        values.put(KEY_CREDITS, events.get_credits());
+        // Inserting Row
+        db.insert("events", null, values);
+        db.close(); // Closing database connection
+    }
+    // Getting All Events
+    public List<Events> getAllEvents() {
+        List<Events> eventsList = new ArrayList<Events>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + "events";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Events event = new Events();
+                event.set_id(Integer.parseInt(cursor.getString(0)));
+                event.set_name(cursor.getString(1));
+                event.set_cluster(cursor.getString(2));
+                event.set_status(Integer.parseInt(cursor.getString(3)));
+                event.set_credits(Integer.parseInt(cursor.getString(4)));
+
+                eventsList.add(event);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return eventsList;
+    }
+    // Updating single Event
+    public int updateEvent(Events events) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID,events.get_id());
+        values.put(KEY_NAME, events.get_name());
+        values.put(KEY_CLUSTER, events.get_cluster());
+        values.put(KEY_STATUS,events.get_status());
+        values.put(KEY_CREDITS, events.get_credits());
+
+        // updating row
+        return db.update("events", values, KEY_ID + " = ?",
+                new String[] { String.valueOf(events.get_id()) });
     }
 
     /*public ArrayList<HashMap<String, String>> getAllNotifs() {

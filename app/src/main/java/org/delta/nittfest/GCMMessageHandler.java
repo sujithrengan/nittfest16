@@ -70,7 +70,7 @@ public class GCMMessageHandler extends IntentService {
 
             inboxStyle = new NotificationCompat.InboxStyle();
             String[] events;
-            //TODO push notifications to be stacked
+
 
             events = newMessage.split("\n");
             inboxStyle.setBigContentTitle(title);

@@ -175,7 +175,7 @@ public class LoginActivity extends Activity {
                     button.setClickable(true);
                     break;
                 case 2:
-                    Intent intent = new Intent(getBaseContext(), Notify.class);
+                    //Intent intent = new Intent(getBaseContext(), Notify.class);
                     SharedPreferences.Editor editor = Utilities.sp.edit();
                     editor.putInt("status", Utilities.status);
                     editor.putString("user_name", rollNumber);
@@ -183,8 +183,9 @@ public class LoginActivity extends Activity {
                     editor.putString("user_pass", password);
                     Utilities.password = password;
                     editor.apply();
-                    startActivity(intent);
-                    finish();
+                    Toast.makeText(LoginActivity.this,"LoggedIn",Toast.LENGTH_SHORT).show();
+                    //startActivity(intent);
+                    //finish();
                     break;
 
                 case 3:
