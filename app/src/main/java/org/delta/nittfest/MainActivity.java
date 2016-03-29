@@ -54,7 +54,8 @@ public class MainActivity extends ActionBarActivity {
 
 
         Utilities.sp=this.getSharedPreferences("pop", 0);
-        Utilities.locked=Utilities.sp.getInt("locked",0);
+        Utilities.locked=Utilities.sp.getInt("locked", 0);
+        Utilities.gcm_registered=Utilities.sp.getInt("gcm_registered",0);
         db=new DBController(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
@@ -66,6 +67,7 @@ public class MainActivity extends ActionBarActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
+        if(Utilities.gcm_registered!=1)
         GCMRegisterService.register(this);
 
         //Initalise Dummy List

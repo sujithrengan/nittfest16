@@ -209,7 +209,9 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.bet.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                    Intent i=new Intent(context,LoginActivity.class);
+                    context.startActivity(i);
                 }
             });
             holder.notif.setOnClickListener(new View.OnClickListener() {

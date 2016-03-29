@@ -28,6 +28,10 @@
             android:name=".Notify"
             android:label="Notifications" >
         </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="Login" >
+        </activity>
 
         <receiver
             android:name="org.delta.nittfest.GCMBroadcastReceiver"

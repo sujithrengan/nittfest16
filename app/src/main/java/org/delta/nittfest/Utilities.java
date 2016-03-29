@@ -12,7 +12,7 @@ import java.util.Comparator;
  */
 public class Utilities {
 
-    public static String status;
+    public static int status;
     public static int locked=0;
 
     public static int gcm_registered = 0;
@@ -23,6 +23,9 @@ public class Utilities {
     public static String url_scores="http://api.nittfest.in/leaderboard";
     public static Department[] departments;
     public static SharedPreferences sp;
+    public static String url_auth="https://nittfest.in/api/tshirt/userauth";
+    public static String username;
+    public static String password;
 
     static class ScoreComparator implements Comparator<Department> {
         @Override
