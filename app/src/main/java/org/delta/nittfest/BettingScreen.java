@@ -44,7 +44,7 @@ public class BettingScreen extends Activity {
     private LinearLayoutManager mLayoutManager;
     private EventAdapter mAdapter;
     List<Map<String, String>> sampleList;
-
+    int visibility=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +88,6 @@ public class BettingScreen extends Activity {
         //        scaleAdapter.setFirstOnly(false);
         //        scaleAdapter.setInterpolator(new OvershootInterpolator());
         mRecyclerView.setAdapter(scaleAdapter);
-
-
-
-
         //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(Utilities.strcolorsEvents[notifList.size()%Utilities.strcolorsEvents.length])));
         //getSupportActionBar().setTitle("Notifications");
 
