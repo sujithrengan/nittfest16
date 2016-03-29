@@ -69,6 +69,21 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
     }
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView Header;
+        public CardView notif;
+        public CardView bet;
+        public CardView share;
+        public HeaderViewHolder(View v) {
+            super(v);
+            Header = (TextView)v.findViewById(R.id.header_text);
+            notif=(CardView)v.findViewById(R.id.notif);
+            bet=(CardView)v.findViewById(R.id.bet);
+            //share=(CardView)v.findViewById(R.id.share);
+
+        }
+    }
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public ListAdapter(Context context,int mode) {
@@ -95,6 +110,15 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             DataViewHolder vh = new DataViewHolder(v);
             return vh;
         }
+        else if(viewType==TYPE_HEADER)
+        {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.header_layout_score, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+
+            HeaderViewHolder vh = new HeaderViewHolder(v);
+            return vh;
+        }
         else if(viewType==TYPE_FOOTER)
         {
             View v = LayoutInflater.from(parent.getContext())
@@ -110,7 +134,9 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if(position<12)
+        if(position==0)
+            return  TYPE_HEADER;
+        else if(position<13)
            return  TYPE_DATA;
 
         else
@@ -120,12 +146,13 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int posit) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
         if(mholder instanceof DataViewHolder) {
 
+            int position=posit-1;
             //Log.e("Recycle",String.valueOf(position));
             DataViewHolder holder = (DataViewHolder)mholder;
             holder.Score.setTypeface(t);
@@ -139,8 +166,8 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //if (position == 11)
               //  params.bottomMargin = 50;
 
-            if (position == 0)
-                params.topMargin = 25;
+            //if (position == 0)
+                //params.topMargin = 25;
 
 
             holder.Dept.setOnClickListener(new View.OnClickListener() {
@@ -175,6 +202,31 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
 
+        else if(mholder instanceof HeaderViewHolder) {
+            HeaderViewHolder holder =(HeaderViewHolder)mholder;
+
+            holder.Header.setTypeface(t);
+            holder.bet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                }
+            });
+            holder.notif.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context,"notif",Toast.LENGTH_SHORT).show();
+                    Intent i=new Intent(context,Notify.class);
+                    context.startActivity(i);
+                }
+            });
+            //ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.Footer.getLayoutParams();
+            //params.bottomMargin=0;
+
+
+
+        }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -183,6 +235,6 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if(mode==0)
             return 0;
         else
-        return 13;
+        return 14;
     }
 }

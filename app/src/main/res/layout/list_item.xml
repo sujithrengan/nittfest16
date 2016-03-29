@@ -11,6 +11,8 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:id="@+id/rootlayout"
+        android:layout_below="@id/header_text"
+        android:layout_marginTop="0dp"
         android.support.v7.cardview:cardBackgroundColor="#ffffff"
 
         android:layout_height="wrap_content"
@@ -57,7 +59,7 @@
                         android:id="@+id/Dept"
 
                         android:textColor="#1c75bc"
-                        android:text="Contact name"
+                        android:text="department"
                         android:textSize="35sp"
 
                         />
@@ -70,7 +72,7 @@
                         android:id="@+id/Score"
                         android:gravity="right"
 
-                        android:text="timestamp"
+                        android:text="score"
                         android:textColor="#1c75bc"
 
                         android:textSize="33sp" />

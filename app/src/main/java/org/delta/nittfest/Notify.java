@@ -74,6 +74,53 @@ public class Notify extends Activity {
             public void onRefresh() {
 
                 //new getnotifsfromDB().execute();
+                notifList = controller.getAllNotifs();
+                if(notifList.size()>0)
+                {
+                    em.setVisibility(View.INVISIBLE);
+                }
+                else
+                    em.setVisibility(View.VISIBLE);
+
+                notifs=new String[notifList.size()];
+                time=new String[notifList.size()];
+                titles=new String[notifList.size()];
+                for(int i=0;i<notifList.size();i++)
+                {
+                    notifs[i]="null";
+                    time[i]="null";
+                    titles[i] = "null";
+                }
+                for(int i=0;i<notifList.size();i++)
+                {
+                    notifs[i] = notifList.get(i).get("notifText");
+                    time[i]=notifList.get(i).get("time");
+                    titles[i] = notifList.get(i).get("title");
+                    Log.e("time", time[i]);
+
+                }
+
+                sampleList = new ArrayList<Map<String, String>>();
+
+                for (int i = notifList.size()-1; i >=0 ; i--) {
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put(NotifyAdapter.KEY_TEXT, notifs[i]);
+                    map.put(NotifyAdapter.KEY_TIME,time[i]);
+                    map.put(NotifyAdapter.KEY_TITLE,titles[i]);
+                    Log.e("notif", titles[i]);
+                    sampleList.add(map);
+                }
+
+
+                mAdapter=new NotifyAdapter(Notify.this,1,sampleList);
+                mRecyclerView.setItemAnimator(new FadeInAnimator());
+                AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
+                ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
+                //        scaleAdapter.setFirstOnly(false);
+                //        scaleAdapter.setInterpolator(new OvershootInterpolator());
+                mRecyclerView.setAdapter(scaleAdapter);
+
+                mSwipeRefreshLayout.setRefreshing(false);
 
             }
         });
@@ -103,7 +150,7 @@ public class Notify extends Activity {
             map.put(NotifyAdapter.KEY_TEXT, notifs[i]);
             map.put(NotifyAdapter.KEY_TIME,time[i]);
             map.put(NotifyAdapter.KEY_TITLE,titles[i]);
-            Log.e("notif",titles[i]);
+            Log.e("notif", titles[i]);
             sampleList.add(map);
         }
 
