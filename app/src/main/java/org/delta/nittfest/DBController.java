@@ -211,7 +211,7 @@ public class DBController  extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+
         return eventsList;
     }
     // Updating single Event
