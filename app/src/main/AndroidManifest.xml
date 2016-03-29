@@ -33,6 +33,10 @@
             android:label="Betting" >
         </activity>
         <activity
+            android:name=".DeptBetting"
+            android:label="DeptBetting" >
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:label="Login" >
         </activity>
