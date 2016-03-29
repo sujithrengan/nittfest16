@@ -1,6 +1,8 @@
 package org.delta.nittfest;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.opengl.Visibility;
 import android.support.v7.widget.CardView;
@@ -27,11 +29,10 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     static final int TYPE_FOOTER=3;
     static final int TYPE_DATA=2;
 
-    public static final String KEY_TITLE = "Title";
-    public static final String KEY_CREDIT = "credit";
-    public static final String KEY_CLUSTER = "cluster";
-    List<Map<String, String>> eventList=null;
+    List<Events> eventList=null;
 
+    int vis_pos=-1;
+    int vis_count=0;
     private final ViewGroup.LayoutParams footerparams;
 
     Typeface t;
@@ -62,6 +63,22 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
+
+    }
+
+
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView Header;
+        public CardView goback;
+        public HeaderViewHolder(View v) {
+            super(v);
+            Header = (TextView)v.findViewById(R.id.header_text);
+            goback=(CardView)v.findViewById(R.id.goback);
+
+            //share=(CardView)v.findViewById(R.id.share);
+
+        }
     }
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +92,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public EventAdapter(Context context, int mode, List<Map<String, String>> eventList,int Visibility) {
+    public EventAdapter(Context context, int mode, List<Events> eventList,int Visibility) {
 
         this.eventList=eventList;
         this._Visibility = Visibility;
@@ -85,12 +102,14 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.footerparams=new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
+        for(int i=0;i<eventList.size();i++)
+            Log.e("evelist",eventList.get(i)._name);
     }
 
     // Create new views (invoked by the layout manager)
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType) {
+                                                      int viewType) {
 
         if (viewType == TYPE_DATA) {
             // create a new view
@@ -99,6 +118,15 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             // set the view's size, margins, paddings and layout parameters
 
             DataViewHolder vh = new DataViewHolder(v);
+            return vh;
+        }
+        else if(viewType==TYPE_HEADER)
+        {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.header_layout_event, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+
+            HeaderViewHolder vh = new HeaderViewHolder(v);
             return vh;
         }
         else if(viewType==TYPE_FOOTER)
@@ -116,8 +144,12 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(position<eventList.size())
-           return  TYPE_DATA;
+
+        if (position==0)
+            return TYPE_HEADER;
+
+        else if(position<eventList.size()+1)
+            return  TYPE_DATA;
 
         else
             return TYPE_FOOTER;
@@ -126,53 +158,74 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int posit) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
         if(mholder instanceof DataViewHolder) {
 
+            final int position=posit-1;
             //Log.e("Recycle",String.valueOf(position));
             final DataViewHolder holder = (DataViewHolder)mholder;
-            if(_Visibility==1)holder.layout.setVisibility(View.VISIBLE);
+            holder.layout.setVisibility(View.GONE);
+            if(vis_pos==posit)
+                holder.layout.setVisibility(View.GONE);
+            //if(_Visibility==1)holder.layout.setVisibility(View.VISIBLE);
+            //else
+            //    holder.layout.setVisibility(View.GONE);
             holder.title.setTypeface(t);
             holder.cluster.setTypeface(t);
             holder.credit.setTypeface(t);
 
-            holder.title.setText(eventList.get(position).get(KEY_TITLE));
-            holder.credit.setText(eventList.get(position).get(KEY_CREDIT));
-            Log.e("notif", eventList.get(position).get(KEY_TITLE));
-            holder.cluster.setText(eventList.get(position).get(KEY_CLUSTER));
+            holder.title.setText(eventList.get(position)._name);
+            if(eventList.get(position)._status==0)
+            holder.credit.setText("Place your bets");
+            else
+                holder.credit.setText("Bets placed");
+            //Log.e("notif", eventList.get(position).get(KEY_TITLE));
+            holder.cluster.setText(eventList.get(position)._cluster);
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
             params.bottomMargin = 0;
             params.topMargin = 0;
-            _Visibility=1;
+            //_Visibility=1;
             holder.rootLayout.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            if(_Visibility==1){
-                                holder.layout.setVisibility(View.VISIBLE);
-                                Log.e("in visible","visibility 1->2");
-                                _Visibility=2;
 
+                            //TODO:Check bet_status and decide
+                            if (eventList.get(position)._status!=0) {
+                                vis_pos=posit;
+
+                                if (vis_count%2==0) {
+                                    holder.layout.setVisibility(View.VISIBLE);
+                                    //Log.e("in visible", "visibility 1->2");
+                                    //_Visibility = 2;
+
+                                } else {
+                                    holder.layout.setVisibility(View.GONE);
+                                    //Log.e("in invisible", "visibility 2->1");
+                                    //_Visibility = 1;
+                                }
+                                vis_count++;
                             }
-                            else if(_Visibility==2){
-                                holder.layout.setVisibility(View.INVISIBLE);
-                                Log.e("in invisible", "visibility 2->1");
-                                _Visibility=1;
+
+                            else
+                            {
+                                holder.layout.setVisibility(View.GONE);
+                                Intent i=new Intent(context,DeptBetting.class);
+                                context.startActivity(i);
                             }
-                            else  holder.layout.setVisibility(View.INVISIBLE);
                         }
 
                     }
             );
             //if (position == 11)
-              //  params.bottomMargin = 50;
+            //  params.bottomMargin = 50;
 
             //if (position == 0)
-              //  params.topMargin = 25;
+            //  params.topMargin = 25;
 
 
         }
@@ -190,6 +243,24 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
+        else if(mholder instanceof HeaderViewHolder) {
+            HeaderViewHolder holder =(HeaderViewHolder)mholder;
+
+
+            holder.Header.setTypeface(t);
+            //TODO:Set the credit amount here
+            holder.Header.setText("Credits:"+" 99999");
+            holder.goback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                    ((Activity) context).finish();
+
+                }
+            });
+
+        }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -198,7 +269,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(mode==0)
             return 0;
         else
-        return eventList.size()+1;
+            return eventList.size()+2;
     }
 
 

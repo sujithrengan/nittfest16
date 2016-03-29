@@ -11,17 +11,22 @@ public class Events {
     String _cluster;
     int _status;
     int _credits;
+    String _desc;
+    int _won;
     public Events(){
 
     }
 
     // constructor
-    public Events(int id, String name, String cluster,int status,int credits){
+    public Events(int id, String name, String cluster,int status,int credits,String desc,int won){
         this._id = id;
         this._name = name;
         this._cluster = cluster;
         this._status = status;
         this._credits = credits;
+        this._desc=desc;
+        this._won=won;
+
     }
 
     public int get_id() {

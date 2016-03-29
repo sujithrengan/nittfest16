@@ -43,7 +43,7 @@ public class BettingScreen extends Activity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
     private EventAdapter mAdapter;
-    List<Map<String, String>> sampleList;
+    List<Events> sampleList;
     int visibility=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +75,15 @@ public class BettingScreen extends Activity {
             }
         });
 
-        sampleList = new ArrayList<Map<String, String>>();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EventAdapter.KEY_TITLE, "Dance");
-        map.put(EventAdapter.KEY_CLUSTER, "dance");
-        map.put(EventAdapter.KEY_CREDIT, "Place your bets");
-        sampleList.add(map);
+        sampleList = new ArrayList<Events>();
+        sampleList.add(new Events(1, "Music", "Culturals", 1, 0, null, 0));
+        sampleList.add(new Events(2, "Dance", "Culturals", 0, 0, null, 0));
+        sampleList.add(new Events(3, "Mano", "Culturals", 2, 0, null, 0));
+        sampleList.add(new Events(4,"Movie","Culturals",0,0,null,0));
+        sampleList.add(new Events(1, "Music", "Culturals", 1, 0, null, 0));
+        sampleList.add(new Events(2,"Dance","Culturals",0,0,null,0));
+        sampleList.add(new Events(3, "Mano", "Culturals", 2, 0, null, 0));
+        sampleList.add(new Events(4,"Movie","Culturals",0,0,null,0));
         mAdapter=new EventAdapter(BettingScreen.this,1,sampleList,0);
         mRecyclerView.setItemAnimator(new FadeInAnimator());
         AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);

@@ -49,7 +49,6 @@ public class DeptBetting extends Activity {
         setContentView(R.layout.activity_betting_events);
 
 
-
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
         //mSwipeRefreshLayout.setColorScheme(R.color.color_scheme_1_1, R.color.color_scheme_1_2,
@@ -75,9 +74,8 @@ public class DeptBetting extends Activity {
 
         sampleList = new ArrayList<Map<String, String>>();
         Map<String, String> map = new HashMap<String, String>();
-        map.put(EventAdapter.KEY_TITLE, "Dance");
-        map.put(EventAdapter.KEY_CLUSTER, "dance");
-        map.put(EventAdapter.KEY_CREDIT, "Place your bets");
+        map.put(DeptAdapter.KEY_TITLE, "Dance");
+        map.put(DeptAdapter.KEY_RANK, "0");
         sampleList.add(map);
         mAdapter=new DeptAdapter(DeptBetting.this,1,sampleList,0);
         mRecyclerView.setItemAnimator(new FadeInAnimator());

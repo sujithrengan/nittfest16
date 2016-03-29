@@ -34,18 +34,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:padding="5dp"
+                android:paddingTop="3dp"
+                android:paddingLeft="7dp"
+                android:gravity="bottom"
                 android:layout_marginLeft="5dp"
                 android:text="Large Text"
                 android:textColor="#1c75bc"
                 android:textSize="25sp"
                 />
             <ImageView
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="10sp"
+                android:layout_height="10sp"
                 android:layout_alignParentRight="true"
                 android:layout_margin="10sp"
-                android:src="@drawable/gbut"
+                android:src="@drawable/circle"
                 android:id="@+id/stat_but"/>
             <TextView
                 android:layout_below="@+id/title"
@@ -54,7 +56,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:padding="10dp"
+
+                android:paddingLeft="10dp"
+                android:gravity="top"
+
                 android:layout_marginLeft="10dp"
                 android:text="Large "
                 android:textAppearance="?android:attr/textAppearanceMedium"
