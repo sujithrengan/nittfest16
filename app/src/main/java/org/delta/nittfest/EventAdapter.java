@@ -141,19 +141,31 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             holder.title.setText(eventList.get(position).get(KEY_TITLE));
             holder.credit.setText(eventList.get(position).get(KEY_CREDIT));
-            Log.e("notif",eventList.get(position).get(KEY_TITLE));
+            Log.e("notif", eventList.get(position).get(KEY_TITLE));
             holder.cluster.setText(eventList.get(position).get(KEY_CLUSTER));
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
             params.bottomMargin = 0;
             params.topMargin = 0;
-
+            _Visibility=1;
             holder.rootLayout.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
+                            if(_Visibility==1){
                                 holder.layout.setVisibility(View.VISIBLE);
+                                Log.e("in visible","visibility 1->2");
+                                _Visibility=2;
+
+                            }
+                            else if(_Visibility==2){
+                                holder.layout.setVisibility(View.INVISIBLE);
+                                Log.e("in invisible", "visibility 2->1");
+                                _Visibility=1;
+                            }
+                            else  holder.layout.setVisibility(View.INVISIBLE);
                         }
+
                     }
             );
             //if (position == 11)

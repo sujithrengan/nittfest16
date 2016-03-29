@@ -21,11 +21,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DBController  extends SQLiteOpenHelper {
-    private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_CLUSTER = "cluster";
-    private static final String KEY_STATUS = "status";
-    private static final String KEY_CREDITS = "credits";
+    private static final String EVENT_ID = "id";
+    private static final String EVENT_NAME = "name";
+    private static final String EVENT_CLUSTER = "cluster";
+    private static final String EVENT_BET_STATUS = "status";
+    private static final String EVENT_BET_DESC = "dept_name";
+    private static final String EVENT_CREDITS_BET = "credits_bet";
+    private static final String EVENT_CREDITS_WON = "credits_won";
 
     public DBController(Context applicationcontext) {
         super(applicationcontext, "user.db", null, 1);
@@ -39,11 +41,13 @@ public class DBController  extends SQLiteOpenHelper {
         query = "CREATE TABLE notifs ( notifText TEXT,time TEXT,title TEXT)";
         database.execSQL(query);
         String CREATE_EVENTS_TABLE = "CREATE TABLE " + "events" + "("
-                + KEY_ID + " INTEGER PRIMARY KEY,"
-                + KEY_NAME + " TEXT,"
-                + KEY_CLUSTER + " TEXT"
-                + KEY_STATUS + " INTEGER"
-                + KEY_CREDITS + " INTEGER" + ")";
+                + EVENT_ID + " INTEGER PRIMARY KEY,"
+                + EVENT_NAME + " TEXT,"
+                + EVENT_CLUSTER + " TEXT"
+                + EVENT_BET_DESC + " TEXT"
+                + EVENT_BET_STATUS + " INTEGER"
+                + EVENT_CREDITS_BET + " INTEGER"
+                + EVENT_CREDITS_WON + " INTEGER" + ")";
         database.execSQL(CREATE_EVENTS_TABLE);
     }
     @Override
@@ -175,11 +179,11 @@ public class DBController  extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID,events.get_id());
-        values.put(KEY_NAME, events.get_name());
-        values.put(KEY_CLUSTER, events.get_cluster());
-        values.put(KEY_STATUS,events.get_status());
-        values.put(KEY_CREDITS, events.get_credits());
+        values.put(EVENT_ID,events.get_id());
+        values.put(EVENT_NAME, events.get_name());
+        values.put(EVENT_CLUSTER, events.get_cluster());
+        values.put(EVENT_BET_STATUS,events.get_status());
+        values.put(EVENT_CREDITS_WON, events.get_credits());
         // Inserting Row
         db.insert("events", null, values);
         db.close(); // Closing database connection
@@ -207,7 +211,7 @@ public class DBController  extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+
         return eventsList;
     }
     // Updating single Event
@@ -215,14 +219,15 @@ public class DBController  extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID,events.get_id());
-        values.put(KEY_NAME, events.get_name());
-        values.put(KEY_CLUSTER, events.get_cluster());
-        values.put(KEY_STATUS,events.get_status());
-        values.put(KEY_CREDITS, events.get_credits());
+        values.put(EVENT_ID,events.get_id());
+        values.put(EVENT_NAME, events.get_name());
+        values.put(EVENT_CLUSTER, events.get_cluster());
+        values.put(EVENT_BET_STATUS,events.get_status());
+        values.put(EVENT_CREDITS_BET, events.get_credits());
+        values.put(EVENT_CREDITS_WON, events.get_credits());
 
         // updating row
-        return db.update("events", values, KEY_ID + " = ?",
+        return db.update("events", values, EVENT_ID + " = ?",
                 new String[] { String.valueOf(events.get_id()) });
     }
 
