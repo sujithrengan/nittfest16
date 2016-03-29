@@ -52,12 +52,15 @@ public class LoginActivity extends Activity {
 
         this.t=Typeface.createFromAsset(this.getAssets(),"fonts/hn.otf");
 
-
-        handleButtonClick();
+        Intent intent = new Intent(this, BettingScreen.class);
+        startActivity(intent);
+        finish();
+        //handleButtonClick();
     }
 
 
     private void handleButtonClick() {
+
         rollNumberText = (EditText) findViewById(R.id.rollNumber);
         passwordText = (EditText) findViewById(R.id.password);
         rollNumberText.setTypeface(t);
@@ -175,7 +178,7 @@ public class LoginActivity extends Activity {
                     button.setClickable(true);
                     break;
                 case 2:
-                    //Intent intent = new Intent(getBaseContext(), Notify.class);
+                    Intent intent = new Intent(getBaseContext(), BettingScreen.class);
                     SharedPreferences.Editor editor = Utilities.sp.edit();
                     editor.putInt("status", Utilities.status);
                     editor.putString("user_name", rollNumber);
@@ -184,8 +187,8 @@ public class LoginActivity extends Activity {
                     Utilities.password = password;
                     editor.apply();
                     Toast.makeText(LoginActivity.this,"LoggedIn",Toast.LENGTH_SHORT).show();
-                    //startActivity(intent);
-                    //finish();
+                    startActivity(intent);
+                    finish();
                     break;
 
                 case 3:

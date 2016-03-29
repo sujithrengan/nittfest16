@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class BettingScreen extends Activity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
     private EventAdapter mAdapter;
+    List<Map<String, String>> sampleList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,16 +60,20 @@ public class BettingScreen extends Activity {
             }
         });
 
-    //TODO: API Call to get Event status(Closed or open)
-    //TODO: getList from DBController and set adapter.
-
-        //mAdapter=new EventAdapter(BettingScreen.this,1,);
+        sampleList = new ArrayList<Map<String, String>>();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(EventAdapter.KEY_TITLE, "Dance");
+        map.put(EventAdapter.KEY_CLUSTER, "dance");
+        map.put(EventAdapter.KEY_CREDIT, "Place your bets");
+        sampleList.add(map);
+        mAdapter=new EventAdapter(BettingScreen.this,1,sampleList,0);
         mRecyclerView.setItemAnimator(new FadeInAnimator());
         AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
         //        scaleAdapter.setFirstOnly(false);
         //        scaleAdapter.setInterpolator(new OvershootInterpolator());
         mRecyclerView.setAdapter(scaleAdapter);
+
 
 
 
@@ -84,12 +90,14 @@ public class BettingScreen extends Activity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -98,6 +106,7 @@ public class BettingScreen extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }
