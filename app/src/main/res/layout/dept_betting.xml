@@ -35,43 +35,26 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:padding="5dp"
-                android:layout_marginLeft="5dp"
+                android:layout_margin="10sp"
                 android:text="Large Text"
                 android:textColor="#1c75bc"
-                android:textSize="25sp"
+                android:textSize="30sp"
                 />
-            <ImageView
-                android:layout_width="30sp"
-                android:layout_height="30sp"
-                android:layout_alignParentRight="true"
-                android:layout_margin="10sp"
-                android:src="@drawable/gbut"
-                android:id="@+id/stat_but"/>
+
             <TextView
-                android:layout_below="@+id/title"
-                android:id="@+id/cluster"
+                android:layout_alignRight="@+id/title"
+                android:id="@+id/position"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:padding="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_margin="10sp"
                 android:text="Large "
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#1c75bc"
                 android:textSize="17sp"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="timestamp"
-                android:id="@+id/credit"
-                android:layout_below="@id/cluster"
-                android:textSize="12sp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="5dp"
-                android:layout_alignParentRight="true"
-                android:textColor="#1c75bc"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -79,18 +62,31 @@
                 android:id="@+id/expandedLayout"
 
 
-                android:visibility="gone"
+                android:visibility="visible"
 
-                android:layout_below="@+id/credit"
+                android:layout_below="@+id/position"
                 android:layout_alignParentStart="true">
                 <TextView
                     android:layout_width="wrap_content"
+                    android:id="@+id/textview"
                     android:layout_height="wrap_content"
-                    android:text="Bet placed:"
-                    android:textColor="#1c75bc"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:text="Place your Bet"
                     android:textSize="20sp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:textColor="#1c75bc"/>
+                <SeekBar
+                    android:id="@+id/seekbar_font"
+                    android:layout_below="@+id/textview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30sp"
+                    android:minHeight="10dp"
+                    android:maxHeight="10dp"
+                    android:max="100"
+                    android:progress="10">
+
+                </SeekBar>
 
             </RelativeLayout>
 
