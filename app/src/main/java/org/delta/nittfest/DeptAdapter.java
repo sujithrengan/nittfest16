@@ -2,7 +2,6 @@ package org.delta.nittfest;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.opengl.Visibility;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,15 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by HP on 19-02-2016.
+ * Created by bharath on 29/3/16.
  */
-public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int mode;
     int _Visibility;
@@ -28,9 +30,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     static final int TYPE_DATA=2;
 
     public static final String KEY_TITLE = "Title";
-    public static final String KEY_CREDIT = "credit";
-    public static final String KEY_CLUSTER = "cluster";
-    List<Map<String, String>> eventList=null;
+    public static final String KEY_RANK = "rank";
+       List<Map<String, String>> deptlist=null;
 
     private final ViewGroup.LayoutParams footerparams;
 
@@ -46,19 +47,20 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static class DataViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView title;
-        public TextView cluster;
-        public TextView credit;
+        public TextView position;
+        public SeekBar seekBar;
+        TextView seektext;
         public CardView rootLayout;
         RelativeLayout layout;
 
         public DataViewHolder(View v) {
             super(v);
             title=(TextView)v.findViewById(R.id.title);
-            credit=(TextView)v.findViewById(R.id.credit);
-            cluster=(TextView)v.findViewById(R.id.cluster);
+            position=(TextView)v.findViewById(R.id.position);
+            seekBar=(SeekBar)v.findViewById(R.id.seekbar);
             layout=(RelativeLayout)v.findViewById(R.id.expandedLayout);
             rootLayout=(CardView)v.findViewById(R.id.rootlayout);
-
+            seektext = (TextView)v.findViewById(R.id.seektext);
 
         }
 
@@ -75,9 +77,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public EventAdapter(Context context, int mode, List<Map<String, String>> eventList,int Visibility) {
+    public DeptAdapter(Context context, int mode, List<Map<String, String>> deptlist,int Visibility) {
 
-        this.eventList=eventList;
+        this.deptlist=deptlist;
         this._Visibility = Visibility;
         this.mode=mode;
         this.context=context;
@@ -90,12 +92,12 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Create new views (invoked by the layout manager)
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType) {
+                                                      int viewType) {
 
         if (viewType == TYPE_DATA) {
             // create a new view
             View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.event_item, parent, false);
+                    .inflate(R.layout.dept_betting, parent, false);
             // set the view's size, margins, paddings and layout parameters
 
             DataViewHolder vh = new DataViewHolder(v);
@@ -116,8 +118,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(position<eventList.size())
-           return  TYPE_DATA;
+        if(position<deptlist.size())
+            return  TYPE_DATA;
 
         else
             return TYPE_FOOTER;
@@ -134,19 +136,37 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             //Log.e("Recycle",String.valueOf(position));
             final DataViewHolder holder = (DataViewHolder)mholder;
-            if(_Visibility==1)holder.layout.setVisibility(View.VISIBLE);
-            holder.title.setTypeface(t);
-            holder.cluster.setTypeface(t);
-            holder.credit.setTypeface(t);
 
-            holder.title.setText(eventList.get(position).get(KEY_TITLE));
-            holder.credit.setText(eventList.get(position).get(KEY_CREDIT));
-            Log.e("notif", eventList.get(position).get(KEY_TITLE));
-            holder.cluster.setText(eventList.get(position).get(KEY_CLUSTER));
+            holder.title.setTypeface(t);
+            holder.position.setTypeface(t);
+
+
+            holder.title.setText(deptlist.get(position).get(KEY_TITLE));
+            holder.position.setText(deptlist.get(position).get(KEY_RANK));
+
+
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
             params.bottomMargin = 0;
             params.topMargin = 0;
             _Visibility=1;
+            holder.seekBar.setOnSeekBarChangeListener(
+                    new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            holder.seektext.setText(String.valueOf(progress));
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+
+                        }
+                    }
+            );
             holder.rootLayout.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -159,20 +179,20 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                             }
                             else if(_Visibility==2){
-                                holder.layout.setVisibility(View.INVISIBLE);
+                                holder.layout.setVisibility(View.GONE);
                                 Log.e("in invisible", "visibility 2->1");
                                 _Visibility=1;
                             }
-                            else  holder.layout.setVisibility(View.INVISIBLE);
+                            else  holder.layout.setVisibility(View.GONE);
                         }
 
                     }
             );
             //if (position == 11)
-              //  params.bottomMargin = 50;
+            //  params.bottomMargin = 50;
 
             //if (position == 0)
-              //  params.topMargin = 25;
+            //  params.topMargin = 25;
 
 
         }
@@ -198,7 +218,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(mode==0)
             return 0;
         else
-        return eventList.size()+1;
+            return deptlist.size()+1;
     }
 
 
