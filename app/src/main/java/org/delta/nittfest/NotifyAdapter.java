@@ -1,6 +1,8 @@
 package org.delta.nittfest;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -71,6 +73,21 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView Header;
+        public CardView goback;
+        public HeaderViewHolder(View v) {
+            super(v);
+            Header = (TextView)v.findViewById(R.id.header_text);
+            goback=(CardView)v.findViewById(R.id.goback);
+
+            //share=(CardView)v.findViewById(R.id.share);
+
+        }
+    }
+
+
     // Provide a suitable constructor (depends on the kind of dataset)
     public NotifyAdapter(Context context, int mode,List<Map<String,String>> notifList) {
 
@@ -97,6 +114,15 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             DataViewHolder vh = new DataViewHolder(v);
             return vh;
         }
+        else if(viewType==TYPE_HEADER)
+        {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.header_layout_notif, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+
+            HeaderViewHolder vh = new HeaderViewHolder(v);
+            return vh;
+        }
         else if(viewType==TYPE_FOOTER)
         {
             View v = LayoutInflater.from(parent.getContext())
@@ -112,7 +138,9 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        if(position<notifList.size())
+        if (position==0)
+            return TYPE_HEADER;
+        else if(position<notifList.size()+1)
            return  TYPE_DATA;
 
         else
@@ -122,12 +150,13 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int posit) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
         if(mholder instanceof DataViewHolder) {
 
+            int position=posit-1;
             //Log.e("Recycle",String.valueOf(position));
             DataViewHolder holder = (DataViewHolder)mholder;
             holder.text.setTypeface(t);
@@ -144,8 +173,8 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             //if (position == 11)
               //  params.bottomMargin = 50;
 
-            if (position == 0)
-                params.topMargin = 25;
+            //if (position == 0)
+              //  params.topMargin = 25;
 
 
         }
@@ -162,6 +191,20 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
         }
+        else if(mholder instanceof HeaderViewHolder) {
+            HeaderViewHolder holder =(HeaderViewHolder)mholder;
+
+            holder.Header.setTypeface(t);
+            holder.goback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                    ((Activity)context).finish();
+
+                }
+            });
+
+        }
 
     }
 
@@ -171,6 +214,6 @@ public class NotifyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if(mode==0)
             return 0;
         else
-        return notifList.size()+1;
+        return notifList.size()+2;
     }
 }

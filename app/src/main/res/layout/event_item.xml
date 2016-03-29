@@ -13,21 +13,11 @@
         android:id="@+id/rootlayout"
         android:layout_marginTop="0dp"
         android.support.v7.cardview:cardBackgroundColor="#ffffff"
-
         android:layout_height="wrap_content"
-
-
         card_view:cardUseCompatPadding="true"
-
-
         card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="3dp"
-
-
-        >
-
-
-        <LinearLayout
+        card_view:cardElevation="3dp">
+       <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:padding="5dp"
