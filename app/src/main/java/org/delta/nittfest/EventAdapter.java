@@ -1,5 +1,6 @@
 package org.delta.nittfest;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.opengl.Visibility;
@@ -62,6 +63,22 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
+
+    }
+
+
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView Header;
+        public CardView goback;
+        public HeaderViewHolder(View v) {
+            super(v);
+            Header = (TextView)v.findViewById(R.id.header_text);
+            goback=(CardView)v.findViewById(R.id.goback);
+
+            //share=(CardView)v.findViewById(R.id.share);
+
+        }
     }
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
@@ -101,6 +118,15 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             DataViewHolder vh = new DataViewHolder(v);
             return vh;
         }
+        else if(viewType==TYPE_HEADER)
+        {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.header_layout_event, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+
+            HeaderViewHolder vh = new HeaderViewHolder(v);
+            return vh;
+        }
         else if(viewType==TYPE_FOOTER)
         {
             View v = LayoutInflater.from(parent.getContext())
@@ -116,7 +142,11 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(position<eventList.size())
+
+        if (position==0)
+            return TYPE_HEADER;
+
+        else if(position<eventList.size()+1)
            return  TYPE_DATA;
 
         else
@@ -126,12 +156,13 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int posit) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
         if(mholder instanceof DataViewHolder) {
 
+            int position=posit-1;
             //Log.e("Recycle",String.valueOf(position));
             final DataViewHolder holder = (DataViewHolder)mholder;
             if(_Visibility==1)holder.layout.setVisibility(View.VISIBLE);
@@ -159,11 +190,11 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                             }
                             else if(_Visibility==2){
-                                holder.layout.setVisibility(View.INVISIBLE);
+                                holder.layout.setVisibility(View.GONE);
                                 Log.e("in invisible", "visibility 2->1");
                                 _Visibility=1;
                             }
-                            else  holder.layout.setVisibility(View.INVISIBLE);
+                            else  holder.layout.setVisibility(View.GONE);
                         }
 
                     }
@@ -190,6 +221,24 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         }
 
+        else if(mholder instanceof HeaderViewHolder) {
+            HeaderViewHolder holder =(HeaderViewHolder)mholder;
+
+
+            holder.Header.setTypeface(t);
+            //TODO:Set the credit amount here
+            holder.Header.setText(holder.Header.getText().toString()+" 99999");
+            holder.goback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                    ((Activity)context).finish();
+
+                }
+            });
+
+        }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -198,7 +247,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(mode==0)
             return 0;
         else
-        return eventList.size()+1;
+        return eventList.size()+2;
     }
 
 
