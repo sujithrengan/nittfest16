@@ -52,6 +52,17 @@ public class Utilities {
 
         Arrays.sort(departments, new ScoreComparator());
     }
+    public static String getCluster(int event_id){
+       switch(event_id){
+           case 56:
+           case 61: return "Hindi Lits";
+
+           case 35:return "Design and Media";
+           default: return "Culturals";
+
+
+       }
+    }
 
 
 
