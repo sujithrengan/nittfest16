@@ -67,7 +67,7 @@ public class BettingScreen extends Activity {
             @Override
             public void onRefresh() {
 
-                //new getnotifsfromDB().execute();
+
 
 
                 mSwipeRefreshLayout.setRefreshing(false);
