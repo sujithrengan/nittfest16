@@ -29,6 +29,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -52,10 +53,10 @@ public class LoginActivity extends Activity {
 
         this.t=Typeface.createFromAsset(this.getAssets(),"fonts/hn.otf");
 
-        Intent intent = new Intent(this, BettingScreen.class);
-        startActivity(intent);
-        finish();
-        //handleButtonClick();
+        //Intent intent = new Intent(this, BettingScreen.class);
+        //startActivity(intent);
+        //finish();
+        handleButtonClick();
     }
 
 
@@ -114,7 +115,7 @@ public class LoginActivity extends Activity {
         protected void onPreExecute() {
 
             myPd_ring  = new ProgressDialog (LoginActivity.this);
-            myPd_ring.setMessage("Loading...");
+            myPd_ring.setMessage("Logging In...");
             myPd_ring.setCancelable(false);
             myPd_ring.setCanceledOnTouchOutside(false);
             myPd_ring.show();
@@ -177,8 +178,8 @@ public class LoginActivity extends Activity {
                     passwordText.setText("");
                     button.setClickable(true);
                     break;
-                case 2:
-                    Intent intent = new Intent(getBaseContext(), BettingScreen.class);
+                case 1:
+                    //Intent intent = new Intent(getBaseContext(), BettingScreen.class);
                     SharedPreferences.Editor editor = Utilities.sp.edit();
                     editor.putInt("status", Utilities.status);
                     editor.putString("user_name", rollNumber);
@@ -187,8 +188,9 @@ public class LoginActivity extends Activity {
                     Utilities.password = password;
                     editor.apply();
                     Toast.makeText(LoginActivity.this,"LoggedIn",Toast.LENGTH_SHORT).show();
-                    startActivity(intent);
-                    finish();
+                    new EventsTask().execute();
+                    //startActivity(intent);
+                    //finish();
                     break;
 
                 case 3:
@@ -200,6 +202,201 @@ public class LoginActivity extends Activity {
             }
         }
     }
+
+
+
+    class ProfileTask extends AsyncTask<String, Void, String> {
+        ProgressDialog myPd_ring = null;
+        @Override
+        protected void onPreExecute() {
+
+            myPd_ring  = new ProgressDialog (LoginActivity.this);
+            myPd_ring.setMessage("Loading Profile...");
+            myPd_ring.setCancelable(false);
+            myPd_ring.setCanceledOnTouchOutside(false);
+            myPd_ring.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String stat = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpEntity httpEntity = null;
+            HttpPost httppost = new HttpPost(Utilities.url_getprofile);
+            JSONObject jsonObject;
+
+            try {
+                List nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair("user_roll", Utilities.username));
+                nameValuePairs.add(new BasicNameValuePair("user_pass", Utilities.password));
+
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+
+                HttpResponse response = null;
+
+                response = httpclient.execute(httppost);
+                httpEntity = response.getEntity();
+                String s = null;
+                s = EntityUtils.toString(httpEntity);
+
+                Log.e("ll", s);
+                jsonObject = new JSONObject(s);
+                if(jsonObject.getInt("status")==2)
+                {
+                    stat=String.valueOf(jsonObject.getInt("status"));
+                    jsonObject=jsonObject.getJSONObject("data");
+                    Utilities.credits_available=jsonObject.getInt("credits_available");
+                    SharedPreferences.Editor editor = Utilities.sp.edit();
+                    editor.putInt("credits_available", Utilities.credits_available);
+                    editor.commit();
+
+                    JSONArray jsonArray=jsonObject.getJSONArray("bet");
+                    JSONObject j;
+                    for(int i=0;i<jsonArray.length();i++)
+                    {
+                        j=jsonArray.getJSONObject(i);
+                        int index=Utilities.eventMap.get(j.getInt("event_id"));
+                        Utilities.events[index]._desc=j.getString("bet_desc");
+                        Utilities.events[index]._status=j.getInt("bet_status");
+                        Utilities.events[index]._won=j.getInt("bet_won");
+                        Utilities.events[index]._credits=j.getInt("bet_credits");
+                    }
+
+
+                    //TODO:Update the eventarray in the DB.
+                }
+
+
+                stat=String.valueOf(jsonObject.getInt("status"));
+
+                Log.e("response", s);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("ll",String.valueOf(e));
+
+
+            }
+
+
+
+            return stat;
+        }
+
+        @Override
+        protected void onPostExecute(String stat) {
+            super.onPostExecute(stat);
+            myPd_ring.dismiss();
+           // System.out.println("Error: " + );
+            //myPd_ring.setMessage("Loading Profile");
+
+
+            switch (stat) {
+
+                case "2":
+                    Intent intent = new Intent(getBaseContext(), BettingScreen.class);
+                    startActivity(intent);
+                    finish();
+                    break;
+
+            }
+        }
+    }
+
+
+    class EventsTask extends AsyncTask<String, Void, String> {
+        ProgressDialog myPd_ring = null;
+        @Override
+        protected void onPreExecute() {
+
+            myPd_ring  = new ProgressDialog (LoginActivity.this);
+            myPd_ring.setMessage("Loading Events...");
+            myPd_ring.setCancelable(false);
+            myPd_ring.setCanceledOnTouchOutside(false);
+            myPd_ring.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String stat = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpEntity httpEntity = null;
+            HttpPost httppost = new HttpPost(Utilities.url_getevents);
+            JSONObject jsonObject;
+
+            try {
+
+                HttpResponse response = null;
+
+                response = httpclient.execute(httppost);
+                httpEntity = response.getEntity();
+                String s = null;
+                s = EntityUtils.toString(httpEntity);
+
+                Log.e("ll", s);
+
+                jsonObject = new JSONObject(s);
+                Log.e("response", s);
+                if(jsonObject.getInt("status")==2)
+                {
+                    JSONArray jsonArray=jsonObject.getJSONArray("data");
+                    JSONObject j;
+                    for(int i=0;i<jsonArray.length();i++)
+                    {
+                        j=jsonArray.getJSONObject(i);
+                        Utilities.events[i]=new Events(j.getInt("event_id"),j.getString("event_name"),"cluster",-1,0,"dept",0,j.getInt("event_status"));
+                        Utilities.eventMap.put(j.getInt("event_id"),i);
+                    }
+                }
+                stat = String.valueOf(jsonObject.getInt("status"));
+                //error = jsonObject.getString("error");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("ll",String.valueOf(e));
+
+
+            }
+
+
+
+            return stat;
+        }
+
+        @Override
+        protected void onPostExecute(String status) {
+            super.onPostExecute(status);
+            myPd_ring.dismiss();
+           // System.out.println("Error: " + error);
+            //myPd_ring.setMessage("Loading Profile");
+
+
+            if(status!=null) {
+                switch (status) {
+
+                    case "2":
+
+
+                    default:
+
+                        new ProfileTask().execute();
+
+                }
+            }
+            else{
+                Toast.makeText(LoginActivity.this,"Internet?",Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+    }
+
+
 
 
 

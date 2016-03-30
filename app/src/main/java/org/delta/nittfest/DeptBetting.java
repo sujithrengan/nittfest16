@@ -41,14 +41,13 @@ public class DeptBetting extends Activity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
     private DeptAdapter mAdapter;
-    List<Map<String, String>> sampleList;
     int visibility=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_betting_events);
 
-
+        int event_id=getIntent().getIntExtra("event_id",0);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
@@ -73,13 +72,8 @@ public class DeptBetting extends Activity {
             }
         });
 
-        sampleList = new ArrayList<Map<String, String>>();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EventAdapter.KEY_TITLE, "Dance");
-        map.put(EventAdapter.KEY_CLUSTER, "dance");
-        map.put(EventAdapter.KEY_CREDIT, "Place your bets");
-        sampleList.add(map);
-        mAdapter=new DeptAdapter(DeptBetting.this,1,sampleList,0);
+
+        mAdapter=new DeptAdapter(DeptBetting.this,event_id,1,0);
         mRecyclerView.setItemAnimator(new FadeInAnimator());
         AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);

@@ -43,8 +43,8 @@ public class BettingScreen extends Activity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
     private EventAdapter mAdapter;
-    List<Map<String, String>> sampleList;
-    int visibility=1;
+    //List<Events> sampleList;
+    //int visibility=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +75,9 @@ public class BettingScreen extends Activity {
             }
         });
 
-        sampleList = new ArrayList<Map<String, String>>();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EventAdapter.KEY_TITLE, "Dance");
-        map.put(EventAdapter.KEY_CLUSTER, "dance");
-        map.put(EventAdapter.KEY_CREDIT, "Place your bets");
-        sampleList.add(map);
-        mAdapter=new EventAdapter(BettingScreen.this,1,sampleList,0);
+        //sampleList = new ArrayList<Events>();
+//TODO: set Utilities.events from DB(To account for network issues)
+        mAdapter=new EventAdapter(BettingScreen.this,1,0);
         mRecyclerView.setItemAnimator(new FadeInAnimator());
         AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
@@ -117,82 +113,6 @@ public class BettingScreen extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-    class AuthTask extends AsyncTask<String, Void, String> {
-        ProgressDialog myPd_ring = null;
-        @Override
-        protected void onPreExecute() {
-
-            myPd_ring  = new ProgressDialog (BettingScreen.this);
-            myPd_ring.setMessage("Loading...");
-            myPd_ring.setCancelable(false);
-            myPd_ring.setCanceledOnTouchOutside(false);
-            myPd_ring.show();
-
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String error = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-
-            HttpEntity httpEntity = null;
-            HttpPost httppost = new HttpPost(Utilities.url_auth);
-            JSONObject jsonObject;
-
-            try {
-                List nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair("user_roll", Utilities.username));
-                nameValuePairs.add(new BasicNameValuePair("user_pass", Utilities.password));
-
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-
-                HttpResponse response = null;
-
-                response = httpclient.execute(httppost);
-                httpEntity = response.getEntity();
-                String s = null;
-                s = EntityUtils.toString(httpEntity);
-
-                Log.e("ll", s);
-
-                jsonObject = new JSONObject(s);
-                Log.e("response", s);
-                Utilities.status = jsonObject.getInt("status");
-                error = jsonObject.getString("error");
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e("ll",String.valueOf(e));
-
-
-            }
-
-
-
-            return error;
-        }
-
-        @Override
-        protected void onPostExecute(String error) {
-            super.onPostExecute(error);
-            System.out.println("Error: " + error);
-            myPd_ring.dismiss();
-
-
-            switch (Utilities.status) {
-                case 0:
-
-                case 2:
-
-
-                case 3:
-                    Toast.makeText(BettingScreen.this, "Your account is not on the system. Please contact NITTFEST OC", Toast.LENGTH_SHORT).show();
-
-                    break;
-            }
-        }
-    }
-
 
 
 

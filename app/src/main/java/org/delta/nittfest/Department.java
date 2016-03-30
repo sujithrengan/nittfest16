@@ -6,6 +6,7 @@ package org.delta.nittfest;
 public class Department {
 
     public String name;
+    public int votes;
     public float score;
     //public int cur_position;
     public int old_position;
@@ -14,6 +15,7 @@ public class Department {
     {
         this.name=name;
         this.score=score;
+        this.votes=0;
 
     }
 }

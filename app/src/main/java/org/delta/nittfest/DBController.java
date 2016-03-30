@@ -231,6 +231,7 @@ public class DBController  extends SQLiteOpenHelper {
                 new String[] { String.valueOf(events.get_id()) });
     }
 
+
     /*public ArrayList<HashMap<String, String>> getAllNotifs() {
         ArrayList<HashMap<String, String>> notifsList;
         notifsList = new ArrayList<HashMap<String, String>>();

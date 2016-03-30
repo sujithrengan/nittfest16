@@ -45,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
+        android:gravity="right"
         android:layout_height="match_parent">
     <TextView
         android:layout_width="wrap_content"
@@ -53,7 +54,7 @@
 
         android:layout_weight="1"
         android:textStyle="bold"
-        android:textSize="30sp"
+        android:textSize="27sp"
         android:text="Credits:"
         android:id="@+id/header_text"
         >

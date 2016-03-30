@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 /**
  * Created by HP on 03-02-2016.
@@ -22,10 +23,17 @@ public class Utilities {
 
     public static String url_scores="http://api.nittfest.in/leaderboard";
     public static Department[] departments;
+    public static Events[] events;
+    public static HashMap<Integer,Integer> eventMap;
     public static SharedPreferences sp;
-    public static String url_auth="https://nittfest.in/api/tshirt/userauth";
+    public static String url_auth="http://api.nittfest.in/betting/auth";
     public static String username;
     public static String password;
+    public static int credits_available;
+    public static String url_getprofile="http://api.nittfest.in/betting/getProfile";
+    public static String url_getevents="http://api.nittfest.in/betting/getEventsStatus";
+    public static String url_getdistribution="http://api.nittfest.in/betting/betDistribution";
+    public static String url_placebet="http://api.nittfest.in/betting/placeBet";
 
     static class ScoreComparator implements Comparator<Department> {
         @Override
@@ -44,6 +52,7 @@ public class Utilities {
 
         Arrays.sort(departments, new ScoreComparator());
     }
+
 
 
 }
