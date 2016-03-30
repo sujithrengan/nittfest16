@@ -419,6 +419,7 @@ if(status!=null) {
 
                         int index=Utilities.eventMap.get(j.getInt("event_id"));
                         Utilities.events[index]._desc=j.getString("bet_desc");
+                        Utilities.events[index]._credits=j.getInt("credits_bet");
                         Utilities.events[index]._status=j.getInt("bet_status");
                         try {
                             Utilities.events[index]._won = j.getInt("bet_won");
