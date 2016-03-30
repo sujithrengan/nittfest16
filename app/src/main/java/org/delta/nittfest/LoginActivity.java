@@ -30,6 +30,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -253,16 +254,22 @@ public class LoginActivity extends Activity {
                     editor.putInt("credits_available", Utilities.credits_available);
                     editor.commit();
 
-                    JSONArray jsonArray=jsonObject.getJSONArray("bet");
+                    JSONArray jsonArray=jsonObject.getJSONArray("bets");
                     JSONObject j;
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         j=jsonArray.getJSONObject(i);
+                        Log.e("******",String.valueOf(j));
                         int index=Utilities.eventMap.get(j.getInt("event_id"));
                         Utilities.events[index]._desc=j.getString("bet_desc");
                         Utilities.events[index]._status=j.getInt("bet_status");
-                        Utilities.events[index]._won=j.getInt("bet_won");
-                        Utilities.events[index]._credits=j.getInt("bet_credits");
+                        Utilities.events[index]._credits=j.getInt("credits_bet");
+                        try {
+                            Utilities.events[index]._won = j.getInt("bet_won");
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
+
                     }
 
 
