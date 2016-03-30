@@ -436,7 +436,7 @@ if(status!=null) {
                 }
 
 
-                stat=String.valueOf(jsonObject.getInt("status"));
+                //stat=String.valueOf(jsonObject.getInt("status"));
 
 
                 Log.e("response", s);
