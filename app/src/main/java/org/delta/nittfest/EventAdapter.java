@@ -1,10 +1,13 @@
 package org.delta.nittfest;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.opengl.Visibility;
+import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,7 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +49,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     int vis_pos=-1;
     int vis_count=0;
+    int picked_eventid;
     private final ViewGroup.LayoutParams footerparams;
 
     Typeface t;
@@ -214,8 +231,11 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                             else
                             {
                                 holder.layout.setVisibility(View.GONE);
-                                Intent i=new Intent(context,DeptBetting.class);
-                                context.startActivity(i);
+                                picked_eventid=Utilities.events[position]._id;
+                                //call distribution.
+                                new StatisticsTask().execute();
+                                //Intent i=new Intent(context,DeptBetting.class);
+                                //context.startActivity(i);
                             }
                         }
 
@@ -271,6 +291,100 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         else
             return 22;
     }
+
+
+
+    class StatisticsTask extends AsyncTask<String, Void, String> {
+        ProgressDialog myPd_ring = null;
+        @Override
+        protected void onPreExecute() {
+
+            myPd_ring  = new ProgressDialog (context);
+            myPd_ring.setMessage("Loading Statistics...");
+            myPd_ring.setCancelable(false);
+            myPd_ring.setCanceledOnTouchOutside(false);
+            myPd_ring.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String stat = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpEntity httpEntity = null;
+            HttpPost httppost = new HttpPost(Utilities.url_getdistribution);
+            JSONObject jsonObject;
+
+            try {
+                List nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair("event_id",String.valueOf(picked_eventid)));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+
+                HttpResponse response = null;
+
+                response = httpclient.execute(httppost);
+                httpEntity = response.getEntity();
+                String s = null;
+                s = EntityUtils.toString(httpEntity);
+
+                Log.e("ll", s);
+                jsonObject = new JSONObject(s);
+                if(jsonObject.getInt("status")==2)
+                {
+                    stat=String.valueOf(jsonObject.getInt("status"));
+                    jsonObject=jsonObject.getJSONObject("data");
+                    for(int i=0;i<12;i++)
+                    {
+                        Utilities.departments[i].votes=jsonObject.getInt(Utilities.departments[i].name);
+                    }
+
+                }
+
+
+
+
+                Log.e("response", s);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("ll",String.valueOf(e));
+
+
+            }
+
+
+
+            return stat;
+        }
+
+        @Override
+        protected void onPostExecute(String stat) {
+            super.onPostExecute(stat);
+            myPd_ring.dismiss();
+            // System.out.println("Error: " + );
+            //myPd_ring.setMessage("Loading Profile");
+
+
+            if(stat!=null) {
+                switch (stat) {
+
+                    case "2":
+                        Intent intent = new Intent(context, DeptBetting.class);
+                        intent.putExtra("event_id",picked_eventid);
+                        context.startActivity(intent);
+                        break;
+
+                }
+            }
+            else{
+                Toast.makeText(context, "Internet?", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
 
 
 }

@@ -1,5 +1,6 @@
 package org.delta.nittfest;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.CardView;
@@ -9,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int mode;
+    final int event_id;
     int _Visibility;
     static final int TYPE_HEADER=1;
     static final int TYPE_FOOTER=3;
@@ -31,14 +34,15 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final String KEY_TITLE = "Title";
     public static final String KEY_RANK = "rank";
-       List<Map<String, String>> deptlist=null;
+
 
     private final ViewGroup.LayoutParams footerparams;
 
     Typeface t;
     Context context;
-
-
+    private String picked_dept;
+    private int vis_pos=-1;
+    private int vis_count=0;
 
 
     // Provide a reference to the views for each data item
@@ -52,6 +56,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView seektext;
         public CardView rootLayout;
         RelativeLayout layout;
+        Button bet;
 
         public DataViewHolder(View v) {
             super(v);
@@ -61,6 +66,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             layout=(RelativeLayout)v.findViewById(R.id.expandedLayout);
             rootLayout=(CardView)v.findViewById(R.id.rootlayout);
             seektext = (TextView)v.findViewById(R.id.seektext);
+            bet=(Button)v.findViewById(R.id.bet_button);
 
         }
 
@@ -76,10 +82,24 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public DeptAdapter(Context context, int mode, List<Map<String, String>> deptlist,int Visibility) {
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // each data item is just a string in this case
+        public TextView Header;
+        public CardView goback;
+        public HeaderViewHolder(View v) {
+            super(v);
+            Header = (TextView)v.findViewById(R.id.header_text);
+            goback=(CardView)v.findViewById(R.id.goback);
 
-        this.deptlist=deptlist;
+            //share=(CardView)v.findViewById(R.id.share);
+
+        }
+    }
+
+    // Provide a suitable constructor (depends on the kind of dataset)
+    public DeptAdapter(Context context,int event_id, int mode,int Visibility) {
+
+        this.event_id=event_id;
         this._Visibility = Visibility;
         this.mode=mode;
         this.context=context;
@@ -103,6 +123,15 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             DataViewHolder vh = new DataViewHolder(v);
             return vh;
         }
+        else if(viewType==TYPE_HEADER)
+        {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.header_layout_notif, parent, false);
+            // set the view's size, margins, paddings and layout parameters
+
+            HeaderViewHolder vh = new HeaderViewHolder(v);
+            return vh;
+        }
         else if(viewType==TYPE_FOOTER)
         {
             View v = LayoutInflater.from(parent.getContext())
@@ -118,7 +147,9 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if(position<deptlist.size())
+        if(position==0)
+            return  TYPE_HEADER;
+        else if(position<13)
             return  TYPE_DATA;
 
         else
@@ -128,32 +159,38 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder mholder, final int posit) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
+        final int position=posit-1;
         if(mholder instanceof DataViewHolder) {
 
             //Log.e("Recycle",String.valueOf(position));
             final DataViewHolder holder = (DataViewHolder)mholder;
 
+            holder.layout.setVisibility(View.GONE);
+            if(vis_pos==posit)
+                holder.layout.setVisibility(View.VISIBLE);
             holder.title.setTypeface(t);
             holder.position.setTypeface(t);
 
 
-            holder.title.setText(deptlist.get(position).get(KEY_TITLE));
-            holder.position.setText(deptlist.get(position).get(KEY_RANK));
+            holder.title.setText(Utilities.departments[position].name);
+            holder.position.setText(Utilities.departments[position].votes+"%");
 
 
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
             params.bottomMargin = 0;
             params.topMargin = 0;
             _Visibility=1;
+
+            holder.seekBar.setMax(Utilities.credits_available-10);
             holder.seekBar.setOnSeekBarChangeListener(
                     new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            holder.seektext.setText(String.valueOf(progress));
+                            holder.seektext.setText(String.valueOf(progress+10));
                         }
 
                         @Override
@@ -167,23 +204,34 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     }
             );
+
+            holder.bet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("SubmitBet","*"+Utilities.username+"."+Utilities.password+"."+(holder.seekBar.getProgress()+10)+"."+picked_dept+"."+event_id+"*");
+                }
+            });
             holder.rootLayout.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            if(_Visibility==1){
-                                holder.layout.setVisibility(View.VISIBLE);
-                                Log.e("in visible","visibility 1->2");
-                                _Visibility=2;
+                            vis_pos=posit;
 
-                            }
-                            else if(_Visibility==2){
+                            picked_dept=Utilities.departments[position].name;
+                            if (vis_count%2==0) {
+                                holder.layout.setVisibility(View.VISIBLE);
+                                //Log.e("in visible", "visibility 1->2");
+                                //_Visibility = 2;
+
+                            } else {
+                                vis_pos=-1;
+                                vis_count=-1;
                                 holder.layout.setVisibility(View.GONE);
-                                Log.e("in invisible", "visibility 2->1");
-                                _Visibility=1;
+                                //Log.e("in invisible", "visibility 2->1");
+                                //_Visibility = 1;
                             }
-                            else  holder.layout.setVisibility(View.GONE);
+                            vis_count++;
                         }
 
                     }
@@ -209,6 +257,22 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         }
+        else if(mholder instanceof HeaderViewHolder) {
+            HeaderViewHolder holder =(HeaderViewHolder)mholder;
+
+            holder.Header.setTypeface(t);
+            holder.Header.setText("pick a department");
+            holder.goback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
+                    ((Activity)context).finish();
+
+                }
+            });
+
+        }
+
 
     }
 
@@ -218,7 +282,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if(mode==0)
             return 0;
         else
-            return deptlist.size()+1;
+            return 14;
     }
 
 

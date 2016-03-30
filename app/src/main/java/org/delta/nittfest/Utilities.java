@@ -32,6 +32,7 @@ public class Utilities {
     public static int credits_available;
     public static String url_getprofile="http://api.nittfest.in/betting/getProfile";
     public static String url_getevents="http://api.nittfest.in/betting/getEventsStatus";
+    public static String url_getdistribution="http://api.nittfest.in/betting/betDistribution";
 
     static class ScoreComparator implements Comparator<Department> {
         @Override
