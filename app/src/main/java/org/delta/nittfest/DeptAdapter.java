@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,6 +34,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LogRecord;
 
 /**
  * Created by bharath on 29/3/16.
@@ -122,6 +124,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.footerparams=new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
+
     }
 
     // Create new views (invoked by the layout manager)
@@ -344,7 +347,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 String s = null;
                 s = EntityUtils.toString(httpEntity);
 
-                Log.e("ll", s);
+                Log.e("Result", s);
                 jsonObject = new JSONObject(s);
                 if(jsonObject.getInt("status")==2)
                 {
@@ -371,7 +374,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
 
-            return stat;
+            return "2";//TODO: change raw return from API side remove dept put for debug.
         }
 
         @Override
@@ -382,29 +385,38 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //myPd_ring.setMessage("Loading Profile");
 
 
+
             if(stat!=null) {
                 switch (stat) {
 
                     case "2":
-                        Intent intent = new Intent(context, MainActivity.class);
-                        Toast.makeText(context,"Bet Placed",Toast.LENGTH_LONG);
-                        context.startActivity(intent);
-                        ((Activity)context).finish();
+
+                        Toast.makeText(context, "Bet Placed xD", Toast.LENGTH_LONG).show();
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // do something
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                context.startActivity(intent);
+                                ((Activity) context).finish();
+                            }
+                        }, 1000);
+
                         break;
 
                     case "3":
-                        Toast.makeText(context,"Error occured",Toast.LENGTH_LONG);
+                        Toast.makeText(context,"Invalid bet",Toast.LENGTH_LONG);
                         ((Activity)context).finish();
 
                 }
             }
             else{
                 //TODO:Temporary FIX for noresponse from server for this APIcall
-                Intent intent = new Intent(context, MainActivity.class);
-                Toast.makeText(context,"Bet Placed",Toast.LENGTH_LONG);
-                context.startActivity(intent);
-                ((Activity)context).finish();
-                //Toast.makeText(context, "Internet?", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(context, "Internet?", Toast.LENGTH_SHORT).show();
             }
 
         }

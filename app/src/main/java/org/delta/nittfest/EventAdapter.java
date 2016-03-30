@@ -68,6 +68,10 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public TextView credit;
         public CardView rootLayout;
         RelativeLayout layout;
+        public TextView betin;
+        public TextView betwon;
+        public TextView betdesc;
+
 
         public DataViewHolder(View v) {
             super(v);
@@ -76,6 +80,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             cluster=(TextView)v.findViewById(R.id.cluster);
             layout=(RelativeLayout)v.findViewById(R.id.expandedLayout);
             rootLayout=(CardView)v.findViewById(R.id.rootlayout);
+            betdesc=(TextView)v.findViewById(R.id.bet_desc);
+            betwon=(TextView)v.findViewById(R.id.bet_won);
+            betin=(TextView)v.findViewById(R.id.bet_in);
 
 
         }
@@ -217,6 +224,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                                 if (vis_count%2==0) {
                                     holder.layout.setVisibility(View.VISIBLE);
+                                    //holder.betin.setText(Utilities.events[position]._credits);
+                                    //holder.betdesc.setText(Utilities.events[position]._desc);
+                                    //holder.betwon.setText(Utilities.events[position]._won);
                                     //Log.e("in visible", "visibility 1->2");
                                     //_Visibility = 2;
 
