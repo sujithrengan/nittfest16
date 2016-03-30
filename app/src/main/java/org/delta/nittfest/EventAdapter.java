@@ -224,9 +224,9 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                                 if (vis_count%2==0) {
                                     holder.layout.setVisibility(View.VISIBLE);
-                                    //holder.betin.setText(Utilities.events[position]._credits);
-                                    //holder.betdesc.setText(Utilities.events[position]._desc);
-                                    //holder.betwon.setText(Utilities.events[position]._won);
+                                    holder.betin.setText(String.valueOf("-"+Utilities.events[position]._credits));
+                                    holder.betdesc.setText(String.valueOf(Utilities.events[position]._desc));
+                                    holder.betwon.setText(String.valueOf("+"+Utilities.events[position]._won));
                                     //Log.e("in visible", "visibility 1->2");
                                     //_Visibility = 2;
 

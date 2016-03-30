@@ -70,9 +70,10 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView title;
         public TextView position;
         public SeekBar seekBar;
+        public TextView textView;
         TextView seektext;
         public CardView rootLayout;
-        RelativeLayout layout;
+        RelativeLayout layout,sub_layout;
         Button bet;
 
         public DataViewHolder(View v) {
@@ -84,6 +85,8 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             rootLayout=(CardView)v.findViewById(R.id.rootlayout);
             seektext = (TextView)v.findViewById(R.id.seektext);
             bet=(Button)v.findViewById(R.id.bet_button);
+            textView = (TextView)v.findViewById(R.id.textview);
+            sub_layout = (RelativeLayout)v.findViewById(R.id.sub_layout);
 
         }
 
@@ -202,8 +205,20 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             params.bottomMargin = 0;
             params.topMargin = 0;
             _Visibility=1;
-
-            holder.seekBar.setMax(Utilities.credits_available-10);
+            int temp = Utilities.credits_available-10;
+            holder.seekBar.setMax(temp);
+            if(temp<=0){
+                holder.seekBar.setEnabled(false);
+                holder.textView.setText(String.valueOf("You don't have enough credits"));
+                holder.bet.setEnabled(false);
+                holder.sub_layout.setVisibility(View.GONE);
+            }
+            else {
+                holder.seekBar.setEnabled(true);
+                holder.textView.setText(String.valueOf("Place your bets"));
+                holder.sub_layout.setVisibility(View.VISIBLE);
+                holder.bet.setEnabled(true);
+            }
             holder.seekBar.setOnSeekBarChangeListener(
                     new SeekBar.OnSeekBarChangeListener() {
                         @Override
@@ -374,7 +389,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
 
-            return "2";//TODO: change raw return from API side remove dept put for debug.
+            return stat;//TODO: change raw return from API side remove dept put for debug.
         }
 
         @Override

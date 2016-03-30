@@ -42,7 +42,7 @@ public class LoginActivity extends Activity {
     EditText rollNumberText, passwordText;
     Button button;
     Typeface t;
-    ProgressDialog myPd_ring = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
