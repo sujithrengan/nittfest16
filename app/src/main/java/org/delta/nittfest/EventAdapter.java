@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.media.Image;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
@@ -15,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,6 +73,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public TextView betin;
         public TextView betwon;
         public TextView betdesc;
+        public ImageView imgbut;
 
 
         public DataViewHolder(View v) {
@@ -83,6 +86,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             betdesc=(TextView)v.findViewById(R.id.bet_desc);
             betwon=(TextView)v.findViewById(R.id.bet_won);
             betin=(TextView)v.findViewById(R.id.bet_in);
+            imgbut = (ImageView)v.findViewById(R.id.stat_but);
+
 
 
         }
@@ -206,6 +211,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             holder.credit.setText("Place your bets");
             else
                 holder.credit.setText("Bets placed");
+            if(Utilities.events[position]._lockstatus==0)holder.imgbut.setImageResource(R.drawable.circle);
+            else holder.imgbut.setImageResource(R.drawable.circle_red);
             //Log.e("notif", eventList.get(position).get(KEY_TITLE));
             holder.cluster.setText(Utilities.events[position]._cluster);
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.rootLayout.getLayoutParams();
@@ -224,7 +231,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                                 if (vis_count%2==0) {
                                     holder.layout.setVisibility(View.VISIBLE);
-                                    holder.betin.setText(String.valueOf("-"+Utilities.events[position]._credits));
+                                    holder.betin.setText(String.valueOf("-" + Utilities.events[position]._credits));
                                     holder.betdesc.setText(String.valueOf(Utilities.events[position]._desc));
                                     holder.betwon.setText(String.valueOf("+"+Utilities.events[position]._won));
                                     //Log.e("in visible", "visibility 1->2");

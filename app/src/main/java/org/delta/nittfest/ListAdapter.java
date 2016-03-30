@@ -313,7 +313,7 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         j=jsonArray.getJSONObject(i);
-                        Utilities.events[i]=new Events(j.getInt("event_id"),j.getString("event_name"),"cluster",-1,0,"dept",0,j.getInt("event_status"));
+                        Utilities.events[i]=new Events(j.getInt("event_id"),j.getString("event_name"),Utilities.getCluster(j.getInt("event_id")),-1,0,"dept",0,j.getInt("event_status"));
                         Utilities.eventMap.put(j.getInt("event_id"),i);
                     }
                 }
