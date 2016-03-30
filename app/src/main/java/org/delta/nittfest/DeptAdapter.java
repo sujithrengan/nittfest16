@@ -1,8 +1,11 @@
 package org.delta.nittfest;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,9 +17,20 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +55,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Typeface t;
     Context context;
     private String picked_dept;
+    private String picked_credit;
     private int vis_pos=-1;
     private int vis_count=0;
 
@@ -191,6 +206,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                             holder.seektext.setText(String.valueOf(progress+10));
+                            picked_credit=String.valueOf(progress+10);
                         }
 
                         @Override
@@ -208,7 +224,9 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.bet.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e("SubmitBet","*"+Utilities.username+"."+Utilities.password+"."+(holder.seekBar.getProgress()+10)+"."+picked_dept+"."+event_id+"*");
+
+                    new PlaceBetTask().execute();
+                    //Log.e("SubmitBet","*"+Utilities.username+"."+Utilities.password+"."+(holder.seekBar.getProgress()+10)+"."+picked_dept+"."+event_id+"*");
                 }
             });
             holder.rootLayout.setOnClickListener(
@@ -284,6 +302,114 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else
             return 14;
     }
+
+
+
+    class PlaceBetTask extends AsyncTask<String, Void, String> {
+        ProgressDialog myPd_ring = null;
+        @Override
+        protected void onPreExecute() {
+
+            myPd_ring  = new ProgressDialog (context);
+            myPd_ring.setMessage("Placing Bet...");
+            myPd_ring.setCancelable(false);
+            myPd_ring.setCanceledOnTouchOutside(false);
+            myPd_ring.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String stat = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpEntity httpEntity = null;
+            HttpPost httppost = new HttpPost(Utilities.url_placebet);
+            JSONObject jsonObject;
+
+            try {
+                List nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair("event_id",String.valueOf(event_id)));
+                nameValuePairs.add(new BasicNameValuePair("user_roll", Utilities.username));
+                nameValuePairs.add(new BasicNameValuePair("user_pass", Utilities.password));
+                nameValuePairs.add(new BasicNameValuePair("credit", picked_credit));
+                nameValuePairs.add(new BasicNameValuePair("dept", picked_dept));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+
+                HttpResponse response = null;
+
+                response = httpclient.execute(httppost);
+                httpEntity = response.getEntity();
+                String s = null;
+                s = EntityUtils.toString(httpEntity);
+
+                Log.e("ll", s);
+                jsonObject = new JSONObject(s);
+                if(jsonObject.getInt("status")==2)
+                {
+                    stat=String.valueOf(jsonObject.getInt("status"));
+                    jsonObject=jsonObject.getJSONObject("data");
+                    for(int i=0;i<12;i++)
+                    {
+                        Utilities.departments[i].votes=jsonObject.getInt(Utilities.departments[i].name);
+                    }
+
+                }
+
+
+
+
+                Log.e("response", s);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("ll",String.valueOf(e));
+
+
+            }
+
+
+
+            return stat;
+        }
+
+        @Override
+        protected void onPostExecute(String stat) {
+            super.onPostExecute(stat);
+            myPd_ring.dismiss();
+            // System.out.println("Error: " + );
+            //myPd_ring.setMessage("Loading Profile");
+
+
+            if(stat!=null) {
+                switch (stat) {
+
+                    case "2":
+                        Intent intent = new Intent(context, MainActivity.class);
+                        Toast.makeText(context,"Bet Placed",Toast.LENGTH_LONG);
+                        context.startActivity(intent);
+                        ((Activity)context).finish();
+                        break;
+
+                    case "3":
+                        Toast.makeText(context,"Error occured",Toast.LENGTH_LONG);
+                        ((Activity)context).finish();
+
+                }
+            }
+            else{
+                //TODO:Temporary FIX for noresponse from server for this APIcall
+                Intent intent = new Intent(context, MainActivity.class);
+                Toast.makeText(context,"Bet Placed",Toast.LENGTH_LONG);
+                context.startActivity(intent);
+                ((Activity)context).finish();
+                //Toast.makeText(context, "Internet?", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+    }
+
 
 
 }

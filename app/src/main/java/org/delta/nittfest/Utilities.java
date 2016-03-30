@@ -33,6 +33,7 @@ public class Utilities {
     public static String url_getprofile="http://api.nittfest.in/betting/getProfile";
     public static String url_getevents="http://api.nittfest.in/betting/getEventsStatus";
     public static String url_getdistribution="http://api.nittfest.in/betting/betDistribution";
+    public static String url_placebet="http://api.nittfest.in/betting/placeBet";
 
     static class ScoreComparator implements Comparator<Department> {
         @Override

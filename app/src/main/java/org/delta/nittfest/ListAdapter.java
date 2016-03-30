@@ -32,6 +32,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -408,16 +409,25 @@ if(status!=null) {
                     editor.putInt("credits_available", Utilities.credits_available);
                     editor.commit();
 
-                    JSONArray jsonArray=jsonObject.getJSONArray("bet");
+                    JSONArray jsonArray=jsonObject.getJSONArray("bets");
                     JSONObject j;
+                    Log.e("events",jsonArray.toString());
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         j=jsonArray.getJSONObject(i);
+                        Log.e("events",i+"."+String.valueOf(j.getInt("event_id")));
+
                         int index=Utilities.eventMap.get(j.getInt("event_id"));
                         Utilities.events[index]._desc=j.getString("bet_desc");
                         Utilities.events[index]._status=j.getInt("bet_status");
-                        Utilities.events[index]._won=j.getInt("bet_won");
-                        Utilities.events[index]._credits=j.getInt("bet_credits");
+                        try {
+                            Utilities.events[index]._won = j.getInt("bet_won");
+                        }
+                        catch (JSONException e){
+                            //do nothing
+                        }
+                        //TODO: Return all rows(bet_desc is empty and return bet_won too)
+                        Utilities.events[index]._credits=j.getInt("credits_bet");
                     }
 
 
@@ -426,6 +436,7 @@ if(status!=null) {
 
 
                 stat=String.valueOf(jsonObject.getInt("status"));
+
 
                 Log.e("response", s);
 

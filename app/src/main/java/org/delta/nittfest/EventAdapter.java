@@ -186,7 +186,7 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             final DataViewHolder holder = (DataViewHolder)mholder;
             holder.layout.setVisibility(View.GONE);
             if(vis_pos==posit)
-                holder.layout.setVisibility(View.GONE);
+                holder.layout.setVisibility(View.VISIBLE);
             //if(_Visibility==1)holder.layout.setVisibility(View.VISIBLE);
             //else
             //    holder.layout.setVisibility(View.GONE);
@@ -221,6 +221,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                                     //_Visibility = 2;
 
                                 } else {
+                                    vis_pos=-1;
+                                    vis_count=-1;
                                     holder.layout.setVisibility(View.GONE);
                                     //Log.e("in invisible", "visibility 2->1");
                                     //_Visibility = 1;
