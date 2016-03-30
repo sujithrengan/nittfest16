@@ -272,11 +272,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                     }
             );
-            //if (position == 11)
-            //  params.bottomMargin = 50;
 
-            //if (position == 0)
-            //  params.topMargin = 25;
 
 
         }
