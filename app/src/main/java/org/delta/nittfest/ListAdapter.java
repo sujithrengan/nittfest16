@@ -93,12 +93,17 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public CardView notif;
         public CardView bet;
         public CardView share;
+
+        public CardView help;
+
+
         public HeaderViewHolder(View v) {
             super(v);
             Header = (TextView)v.findViewById(R.id.header_text);
             notif=(CardView)v.findViewById(R.id.notif);
             bet=(CardView)v.findViewById(R.id.bet);
             //share=(CardView)v.findViewById(R.id.share);
+            help = (CardView)v.findViewById(R.id.help);
 
         }
     }
@@ -228,14 +233,12 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(context, "bet", Toast.LENGTH_SHORT).show();
-                    Utilities.events=new Events[20];
-                    Utilities.eventMap=new HashMap<Integer, Integer>();
-                    if(Utilities.status==0) {
+                    Utilities.events = new Events[20];
+                    Utilities.eventMap = new HashMap<Integer, Integer>();
+                    if (Utilities.status == 0) {
                         Intent i = new Intent(context, LoginActivity.class);
                         context.startActivity(i);
-                    }
-                    else
-                    {
+                    } else {
                         //Toast.makeText(context,"BettingScreen",Toast.LENGTH_SHORT).show();
                         new EventsTask().execute();
                         //TODO:Take to Betting Screen
@@ -251,6 +254,16 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     context.startActivity(i);
                 }
             });
+            holder.help.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(context,Help_Activity.class);
+                            context.startActivity(intent);
+
+                        }
+                    }
+            );
             //ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.Footer.getLayoutParams();
             //params.bottomMargin=0;
 

@@ -81,8 +81,7 @@ public class BettingScreen extends Activity {
         mRecyclerView.setItemAnimator(new FadeInAnimator());
         AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mAdapter);
         ScaleInAnimationAdapter scaleAdapter = new ScaleInAnimationAdapter(alphaAdapter);
-        //        scaleAdapter.setFirstOnly(false);
-        //        scaleAdapter.setInterpolator(new OvershootInterpolator());
+
         mRecyclerView.setAdapter(scaleAdapter);
         //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(Utilities.strcolorsEvents[notifList.size()%Utilities.strcolorsEvents.length])));
         //getSupportActionBar().setTitle("Notifications");

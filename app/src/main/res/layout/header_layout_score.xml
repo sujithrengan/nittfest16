@@ -28,6 +28,26 @@
 
         android:gravity="right"
         android:layout_height="match_parent">
+        <android.support.v7.widget.CardView
+            android:layout_width="50dp"
+            android:id="@+id/help"
+            android:layout_marginTop="0dp"
+            android.support.v7.cardview:cardBackgroundColor="#ffffff"
+
+            android:layout_height="match_parent"
+
+
+            card_view:cardUseCompatPadding="true"
+            card_view:cardCornerRadius="15dp"
+            card_view:cardElevation="3dp"
+
+
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/notif"/>
+        </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="50dp"
