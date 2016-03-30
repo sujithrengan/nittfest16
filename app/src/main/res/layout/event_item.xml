@@ -147,7 +147,7 @@
                         android:text="betwon"
                         android:layout_weight="1"
                         android:id="@+id/bet_won"
-                        android:textColor="#89f83e"
+                        android:textColor="#00C853"
                         android:textSize="20sp"
                         android:layout_gravity="right"
                         android:gravity="right"
