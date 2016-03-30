@@ -255,7 +255,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             vis_pos=posit;
 
                             picked_dept=Utilities.departments[position].name;
-                            if (vis_count%2==0) {
+                            if (vis_count%2==0&&Utilities.events[Utilities.eventMap.get(event_id)]._lockstatus==0) {
                                 holder.layout.setVisibility(View.VISIBLE);
                                 //Log.e("in visible", "visibility 1->2");
                                 //_Visibility = 2;
@@ -360,16 +360,9 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 Log.e("Result", s);
                 jsonObject = new JSONObject(s);
-                if(jsonObject.getInt("status")==2)
-                {
-                    stat=String.valueOf(jsonObject.getInt("status"));
-                    jsonObject=jsonObject.getJSONObject("data");
-                    for(int i=0;i<12;i++)
-                    {
-                        Utilities.departments[i].votes=jsonObject.getInt(Utilities.departments[i].name);
-                    }
 
-                }
+                    stat=String.valueOf(jsonObject.getInt("status"));
+
 
 
 
@@ -419,7 +412,7 @@ public class DeptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         break;
 
                     case "3":
-                        Toast.makeText(context,"Invalid bet",Toast.LENGTH_LONG);
+                        Toast.makeText(context,"Invalid bet",Toast.LENGTH_LONG).show();
                         ((Activity)context).finish();
 
                 }
